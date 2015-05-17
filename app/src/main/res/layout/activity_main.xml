@@ -10,7 +10,7 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/txt_telephone_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -18,14 +18,14 @@
         android:inputType="phone" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/txt_message"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_message_txt"
         android:inputType="textAutoComplete" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btn_send_message" />
