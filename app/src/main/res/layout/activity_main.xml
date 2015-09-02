@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:weightSum="1">
 
     <EditText
         android:id="@+id/txt_telephone_num"
@@ -19,10 +20,11 @@
 
     <EditText
         android:id="@+id/txt_message"
-        android:layout_width="fill_parent"
+        android:layout_width="356dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_message_txt"
-        android:inputType="textAutoComplete" />
+        android:inputType="textAutoComplete"
+        android:layout_weight="0.20" />
 
     <Button
         android:id="@+id/btn_send"

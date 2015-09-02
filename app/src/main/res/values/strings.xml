@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="btn_send_message">Sent message</string>
+    <string name="btn_send_message">Send message</string>
     <string name="hint_telephone_num">Telephone</string>
     <string name="hint_message_txt">Message</string>
 </resources>
