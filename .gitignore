@@ -1,6 +1,13 @@
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+*.iml
+
+## Directory-based project format:
+.idea/
+
+## File-based project format:
+*.ipr
+*.iws
+
 .DS_Store
 /build
