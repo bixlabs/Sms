@@ -1,16 +1,16 @@
 package uy.com.bix.app.smsproject.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import uy.com.bix.app.smsproject.R;
-import uy.com.bix.app.smsproject.service.SmsIntentService;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,22 +28,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void connectUi() {
-        mButtonSend = (Button) findViewById(R.id.btn_send);
-        mEditTextTelephone = (EditText) findViewById(R.id.txt_telephone_num);
-        mEditTextMessage = (EditText) findViewById(R.id.txt_message);
+      mButtonSend = (Button) findViewById(R.id.btn_send);
+      mEditTextTelephone = (EditText) findViewById(R.id.txt_telephone_num);
+      mEditTextMessage = (EditText) findViewById(R.id.txt_message);
 
-        mButtonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent smsIntent = new Intent(getBaseContext(), SmsIntentService.class);
-                Bundle smsData = new Bundle();
-                smsData.putString(SmsIntentService.SMS_MESSAGE, mEditTextMessage.getText().toString());
-                smsData.putString(SmsIntentService.SMS_PHONE, mEditTextTelephone.getText().toString());
-                smsIntent.putExtras(smsData);
+      mButtonSend.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          //We get the number and the message that were inserted in the view
+          String phoneNro = mEditTextTelephone.getText().toString();
+          String smsText = mEditTextMessage.getText().toString();
 
-                startService(smsIntent);
-            }
-        });
+          try {
+            //We use SmsManager API to send the message
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNro, null, smsText, null, null);
+            Toast.makeText(getApplicationContext(), "SMS Sent!", Toast.LENGTH_LONG).show();
+          } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+          }
+        }
+      });
     }
 
 
