@@ -27,7 +27,7 @@ public class SmsReceiver extends BroadcastReceiver {
 			messages = new SmsMessage[pdus.length];
 
 			// For every SMS message received
-			for (int i=0; i < messages.length; i++) {
+			for (int i = 0; i < messages.length; i++) {
 				// Convert Object array
 				messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 				// Sender's phone number
