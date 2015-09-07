@@ -6,12 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.util.Log;
 import android.widget.Toast;
 
 public class SmsReceiver extends BroadcastReceiver {
-	private String TAG = SmsReceiver.class.getSimpleName();
-
 	public SmsReceiver() {
 	}
 
@@ -20,29 +17,29 @@ public class SmsReceiver extends BroadcastReceiver {
 		// Get the data (SMS data) bound to intent
 		Bundle bundle = intent.getExtras();
 
-		SmsMessage[] msgs = null;
+		SmsMessage[] messages = null;
 
-		String str = "";
+		String messageToShow = "";
 
 		if (bundle != null) {
 			// Retrieve the SMS Messages received
 			Object[] pdus = (Object[]) bundle.get("pdus");
-			msgs = new SmsMessage[pdus.length];
+			messages = new SmsMessage[pdus.length];
 
 			// For every SMS message received
-			for (int i=0; i < msgs.length; i++) {
+			for (int i=0; i < messages.length; i++) {
 				// Convert Object array
-				msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+				messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 				// Sender's phone number
-				str += "SMS from " + msgs[i].getOriginatingAddress() + " : ";
+				messageToShow += "SMS from " + messages[i].getOriginatingAddress() + " : ";
 				// Fetch the text message
-				str += msgs[i].getMessageBody().toString();
+				messageToShow += messages[i].getMessageBody().toString();
 				// Newline
-				str += "\n";
+				messageToShow += "\n";
 			}
 
 			// Display the entire SMS Message
-			Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, messageToShow, Toast.LENGTH_SHORT).show();
 		}
 	}
 }
