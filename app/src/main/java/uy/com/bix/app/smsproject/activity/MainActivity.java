@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import uy.com.bix.app.smsproject.R;
+import uy.com.bix.app.smsproject.controllers.MessageController;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 		mButtonSend = (Button) findViewById(R.id.btn_send);
 		mEditTextTelephone = (EditText) findViewById(R.id.txt_telephone_num);
 		mEditTextMessage = (EditText) findViewById(R.id.txt_message);
+		final MessageController msgController = MessageController.getInstance();
 
 		mButtonSend.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 				//We get the number and the message that were inserted in the view
 				String phoneNro = mEditTextTelephone.getText().toString();
 				String smsText = mEditTextMessage.getText().toString();
+
 
 				String sent = "SMS_SENT";
 				String delivered = "SMS_DELIVERED";
@@ -100,9 +103,12 @@ public class MainActivity extends AppCompatActivity {
 					}
 				}, new IntentFilter(delivered));
 
+				msgController.sendMessage(phoneNro, smsText, sentPI, deliveredPI);
+
+				/*
 				//We use SmsManager API to send the message
 				SmsManager smsManager = SmsManager.getDefault();
-				smsManager.sendTextMessage(phoneNro, null, smsText, sentPI, deliveredPI);
+				smsManager.sendTextMessage(phoneNro, null, smsText, sentPI, deliveredPI); */
 			}
 		});
 	}
