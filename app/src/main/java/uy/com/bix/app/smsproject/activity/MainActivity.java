@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import static uy.com.bix.app.smsproject.classes.Constants.*;
 
 import uy.com.bix.app.smsproject.R;
 import uy.com.bix.app.smsproject.controllers.MessageController;
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
 				String smsText = mEditTextMessage.getText().toString();
 
 
-				String sent = "SMS_SENT";
-				String delivered = "SMS_DELIVERED";
+				String sent = MSG_SENT;
+				String delivered = MSG_DELIVERED;
 
 				PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0,
 					new Intent(sent), 0);
@@ -63,24 +64,19 @@ public class MainActivity extends AppCompatActivity {
 					public void onReceive(Context arg0, Intent arg1) {
 						switch (getResultCode()) {
 							case Activity.RESULT_OK:
-								Toast.makeText(getBaseContext(), "SMS sent",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "SMS sent", Toast.LENGTH_SHORT).show();
 								break;
 							case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-								Toast.makeText(getBaseContext(), "Generic failure",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "Generic failure", Toast.LENGTH_SHORT).show();
 								break;
 							case SmsManager.RESULT_ERROR_NO_SERVICE:
-								Toast.makeText(getBaseContext(), "No service",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "No service", Toast.LENGTH_SHORT).show();
 								break;
 							case SmsManager.RESULT_ERROR_NULL_PDU:
-								Toast.makeText(getBaseContext(), "Null PDU",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "Null PDU", Toast.LENGTH_SHORT).show();
 								break;
 							case SmsManager.RESULT_ERROR_RADIO_OFF:
-								Toast.makeText(getBaseContext(), "Radio off",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "Radio off", Toast.LENGTH_SHORT).show();
 								break;
 						}
 					}
@@ -92,23 +88,16 @@ public class MainActivity extends AppCompatActivity {
 					public void onReceive(Context arg0, Intent arg1) {
 						switch (getResultCode()) {
 							case Activity.RESULT_OK:
-								Toast.makeText(getBaseContext(), "SMS delivered",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "SMS delivered", Toast.LENGTH_SHORT).show();
 								break;
 							case Activity.RESULT_CANCELED:
-								Toast.makeText(getBaseContext(), "SMS not delivered",
-									Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(), "SMS not delivered", Toast.LENGTH_SHORT).show();
 								break;
 						}
 					}
 				}, new IntentFilter(delivered));
 
 				msgController.sendMessage(phoneNro, smsText, sentPI, deliveredPI);
-
-				/*
-				//We use SmsManager API to send the message
-				SmsManager smsManager = SmsManager.getDefault();
-				smsManager.sendTextMessage(phoneNro, null, smsText, sentPI, deliveredPI); */
 			}
 		});
 	}
