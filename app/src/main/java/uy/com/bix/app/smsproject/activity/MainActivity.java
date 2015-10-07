@@ -1,6 +1,7 @@
 package uy.com.bix.app.smsproject.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -65,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
-			return true;
+
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 		}
 
 		return super.onOptionsItemSelected(item);
