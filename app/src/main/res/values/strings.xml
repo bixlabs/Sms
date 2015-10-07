@@ -6,4 +6,5 @@
   <string name="btn_send_message">Send message</string>
   <string name="hint_telephone_num">Telephone</string>
   <string name="hint_message_txt">Message</string>
+  <string name="title_activity_settings">SettingsActivity</string>
 </resources>
