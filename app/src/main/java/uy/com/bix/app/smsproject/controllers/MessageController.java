@@ -18,8 +18,7 @@ public class MessageController extends AppCompatActivity {
 
   private static MessageController instance = null;
 
-  private MessageController() {
-  }
+  private MessageController() {}
 
   public static MessageController getInstance() {
     if (instance == null) {
