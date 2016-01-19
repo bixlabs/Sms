@@ -25,10 +25,10 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		connectUi();
+		//connectUi();
 	}
 
-	private void connectUi() {
+	/*private void connectUi() {
 		mButtonSend = (Button) findViewById(R.id.btn_send);
 		mEditTextTelephone = (EditText) findViewById(R.id.txt_telephone_num);
 		mEditTextMessage = (EditText) findViewById(R.id.txt_message);
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 				msgController.sendMessage(phoneNro, smsText, appContext);
 			}
 		});
-	}
+	}*/
 
 
 	@Override

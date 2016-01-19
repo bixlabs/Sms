@@ -9,4 +9,10 @@
   <string name="title_activity_settings">Configuracion</string>
   <string name="settings_toggle">Activo</string>
   <string name="settings_button">Configurar fecha</string>
+  <string-array name="dates_array">
+    <item>Primer dia del mes</item>
+    <item>Ultimo dia del mes</item>
+    <item>Dia personalizado</item>
+  </string-array>
+  <string name="title_activity_splash_screen">SplashScreenActivity</string>
 </resources>

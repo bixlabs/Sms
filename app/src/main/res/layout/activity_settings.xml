@@ -13,24 +13,23 @@
     android:layout_height="wrap_content"
     android:text="@string/settings_toggle"
     android:id="@+id/switch1"
-    android:layout_marginRight="30dp"
-    android:layout_marginEnd="30dp"
     android:checked="false"
     android:layout_alignParentTop="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true"/>
+    android:layout_toRightOf="@+id/checkBox"
+    android:layout_toEndOf="@+id/checkBox"/>
 
   <EditText
     android:id="@+id/editText"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     android:ems="10"
     android:hint="@string/hint_telephone_num"
     android:inputType="phone"
-    android:layout_marginTop="115dp"
-    android:layout_below="@+id/switch1"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"/>
+    android:background="@drawable/back"
+    android:layout_below="@+id/spinner"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="29dp"
+    android:paddingLeft="5dp"/>
 
   <EditText
     android:id="@+id/editText2"
@@ -38,29 +37,33 @@
     android:layout_height="150dp"
     android:hint="@string/hint_message_txt"
     android:inputType="textAutoComplete"
+    android:background="@drawable/back"
     android:layout_weight="0.20"
+    android:layout_marginTop="36dp"
     android:layout_below="@+id/editText"
     android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"/>
+    android:layout_alignParentStart="true"
+    android:paddingLeft="5dp"/>
 
   <CheckBox
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Notificar al enviar"
     android:id="@+id/checkBox"
-    android:layout_below="@+id/editText2"
-    android:layout_marginTop="52dp"
-    android:layout_alignRight="@+id/switch1"
-    android:layout_alignEnd="@+id/switch1"
-    android:checked="true"/>
+    android:checked="true"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="24dp"/>
 
-  <Button
+  <Spinner
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/settings_button"
-    android:id="@+id/btn_date"
-    android:layout_marginTop="33dp"
+    android:id="@+id/spinner"
+    android:layout_marginTop="29dp"
     android:layout_below="@+id/switch1"
-    android:layout_centerHorizontal="true"/>
+    android:layout_alignLeft="@+id/editText"
+    android:layout_alignStart="@+id/editText"
+    android:layout_alignRight="@+id/editText"
+    android:layout_alignEnd="@+id/editText"/>
 
 </RelativeLayout>

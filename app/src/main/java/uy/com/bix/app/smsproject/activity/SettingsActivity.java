@@ -2,26 +2,27 @@ package uy.com.bix.app.smsproject.activity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
+
 
 import java.util.Calendar;
 
 import uy.com.bix.app.smsproject.R;
-import uy.com.bix.app.smsproject.controllers.MessageController;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements OnItemSelectedListener {
 
 	private Button mButtonDate;
+	private Spinner spinner;
 	int newYear, newMonth, newDay;
 	static final int DIALOG_ID = 0;
 
@@ -35,10 +36,43 @@ public class SettingsActivity extends AppCompatActivity {
 		newMonth = cal.get(Calendar.MONTH);
 		newDay = cal.get(Calendar.DATE);
 
-		showDialogOnButtonClick();
+		spinner = (Spinner) findViewById(R.id.spinner);
+
+		// Create an ArrayAdapter using the string array and a default spinner layout
+		ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dates_array, android.R.layout.simple_spinner_item);
+
+		// Specify the layout to use when the list of choices appears
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		// Apply the adapter to the spinner
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(this);
+
+		//showDialogOnButtonClick();
 	}
 
-	public void showDialogOnButtonClick() {
+	public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+
+		switch (position) {
+			case 0:
+				// Whatever you want to happen when the first item gets selected
+				break;
+			case 1:
+				// Whatever you want to happen when the second item gets selected
+				break;
+			case 2:
+				// Whatever you want to happen when the third item gets selected
+				showDialog(DIALOG_ID);
+				break;
+
+		}
+	}
+
+	public void onNothingSelected(AdapterView<?> parent) {
+		// Another interface callback
+	}
+
+	/*public void showDialogOnButtonClick() {
 		mButtonDate = (Button) findViewById(R.id.btn_date);
 
 		mButtonDate.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
 				showDialog(DIALOG_ID);
 			}
 		});
-	}
+	}*/
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
