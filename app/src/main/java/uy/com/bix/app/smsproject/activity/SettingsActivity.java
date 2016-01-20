@@ -2,17 +2,21 @@ package uy.com.bix.app.smsproject.activity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Switch;
+import android.widget.TextView;
 
 
 import java.util.Calendar;
@@ -21,7 +25,10 @@ import uy.com.bix.app.smsproject.R;
 
 public class SettingsActivity extends AppCompatActivity implements OnItemSelectedListener {
 
-	private Button mButtonDate;
+	private Button mButtonCancel, mButtonSave;
+	private EditText mEditPhone, mEditMessage, mEditMax;
+	private Switch isActive;
+	private CheckBox notify;
 	private Spinner spinner;
 	int newYear, newMonth, newDay;
 	static final int DIALOG_ID = 0;
@@ -48,7 +55,26 @@ public class SettingsActivity extends AppCompatActivity implements OnItemSelecte
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(this);
 
-		//showDialogOnButtonClick();
+		// Get saved user settings
+		SharedPreferences settings = getPreferences(MODE_PRIVATE);
+		Log.v("Phone", settings.getString("Phone", "1"));
+		Log.v("Message", settings.getString("Message", "1"));
+		Log.v("Max", settings.getString("Max", "1"));
+
+		mEditPhone = (EditText)findViewById(R.id.editTextPhone);
+		mEditPhone.setText(settings.getString("Phone", "1"), TextView.BufferType.EDITABLE);
+		mEditMessage = (EditText)findViewById(R.id.editTextMessage);
+		mEditMessage.setText(settings.getString("Message", "1"), TextView.BufferType.EDITABLE);
+		mEditMax = (EditText)findViewById(R.id.editTextMax);
+		mEditMax.setText(settings.getString("Max", "1"), TextView.BufferType.EDITABLE);
+		isActive = (Switch) findViewById(R.id.active_switch);
+		isActive.setChecked(settings.getBoolean("Active", false));
+		notify = (CheckBox) findViewById(R.id.notify_checkBox);
+		notify.setChecked(settings.getBoolean("Notify", false));
+
+
+		cancelOnButtonClick();
+		saveOnButtonClick();
 	}
 
 	public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
@@ -72,16 +98,37 @@ public class SettingsActivity extends AppCompatActivity implements OnItemSelecte
 		// Another interface callback
 	}
 
-	/*public void showDialogOnButtonClick() {
-		mButtonDate = (Button) findViewById(R.id.btn_date);
+	public void cancelOnButtonClick() {
+		mButtonCancel = (Button) findViewById(R.id.btn_cancel);
 
-		mButtonDate.setOnClickListener(new View.OnClickListener() {
+		mButtonCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showDialog(DIALOG_ID);
+				onBackPressed();
 			}
 		});
-	}*/
+	}
+
+	public void saveOnButtonClick() {
+		mButtonSave = (Button) findViewById(R.id.btn_save);
+
+		mButtonSave.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				SharedPreferences settings = getPreferences(MODE_PRIVATE);
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString("Phone", mEditPhone.getText().toString());
+				editor.putString("Message", mEditMessage.getText().toString());
+				editor.putString("Max", mEditMax.getText().toString());
+				editor.putBoolean("Active", isActive.isChecked());
+				editor.putBoolean("Notify", notify.isChecked());
+				editor.apply();
+				Log.v("Phone", mEditPhone.getText().toString());
+				Log.v("Message", mEditMessage.getText().toString());
+				Log.v("Max", mEditMax.getText().toString());
+			}
+		});
+	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -100,26 +147,4 @@ public class SettingsActivity extends AppCompatActivity implements OnItemSelecte
 				newDay = day;
 			}
 	};
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_settings, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
 }

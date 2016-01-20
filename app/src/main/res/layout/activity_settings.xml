@@ -12,58 +12,103 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/settings_toggle"
-    android:id="@+id/switch1"
+    android:id="@+id/active_switch"
     android:checked="false"
     android:layout_alignParentTop="true"
-    android:layout_toRightOf="@+id/checkBox"
-    android:layout_toEndOf="@+id/checkBox"/>
+    android:layout_toRightOf="@+id/notify_checkBox"
+    android:layout_toEndOf="@+id/notify_checkBox"/>
 
   <EditText
-    android:id="@+id/editText"
+    android:id="@+id/editTextPhone"
     android:layout_width="wrap_content"
     android:layout_height="40dp"
     android:ems="10"
     android:hint="@string/hint_telephone_num"
     android:inputType="phone"
     android:background="@drawable/back"
-    android:layout_below="@+id/spinner"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:layout_above="@+id/editTextMessage"
     android:layout_centerHorizontal="true"
-    android:layout_marginTop="29dp"
-    android:paddingLeft="5dp"/>
+    android:layout_marginBottom="27dp"/>
 
   <EditText
-    android:id="@+id/editText2"
+    android:id="@+id/editTextMessage"
     android:layout_width="356dp"
-    android:layout_height="150dp"
+    android:layout_height="50dp"
     android:hint="@string/hint_message_txt"
     android:inputType="textAutoComplete"
     android:background="@drawable/back"
-    android:layout_weight="0.20"
-    android:layout_marginTop="36dp"
-    android:layout_below="@+id/editText"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:paddingLeft="5dp"/>
+    android:paddingLeft="5dp"
+    android:layout_centerVertical="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
+    android:paddingRight="5dp"/>
 
   <CheckBox
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Notificar al enviar"
-    android:id="@+id/checkBox"
+    android:text="@string/checkbox_text"
+    android:id="@+id/notify_checkBox"
     android:checked="true"
-    android:layout_alignParentBottom="true"
+    android:layout_below="@+id/editTextMax"
     android:layout_centerHorizontal="true"
-    android:layout_marginBottom="24dp"/>
+    android:layout_marginTop="27dp"/>
 
   <Spinner
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/spinner"
-    android:layout_marginTop="29dp"
-    android:layout_below="@+id/switch1"
-    android:layout_alignLeft="@+id/editText"
-    android:layout_alignStart="@+id/editText"
-    android:layout_alignRight="@+id/editText"
-    android:layout_alignEnd="@+id/editText"/>
+    android:layout_marginTop="23dp"
+    android:layout_below="@+id/active_switch"
+    android:layout_alignLeft="@+id/editTextPhone"
+    android:layout_alignStart="@+id/editTextPhone"
+    android:layout_alignRight="@+id/editTextPhone"
+    android:layout_alignEnd="@+id/editTextPhone"/>
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="@string/max_msgs"
+    android:id="@+id/textView2"
+    android:layout_marginTop="31dp"
+    android:textColor="#111111"
+    android:layout_below="@+id/editTextMessage"
+    android:layout_alignRight="@+id/active_switch"
+    android:layout_alignEnd="@+id/active_switch"/>
+
+  <EditText
+    android:layout_width="wrap_content"
+    android:layout_height="30dp"
+    android:inputType="number"
+    android:ems="10"
+    android:id="@+id/editTextMax"
+    android:background="@drawable/back"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:layout_below="@+id/textView2"
+    android:layout_alignRight="@+id/notify_checkBox"
+    android:layout_alignEnd="@+id/notify_checkBox"
+    android:layout_alignLeft="@+id/notify_checkBox"
+    android:layout_alignStart="@+id/notify_checkBox"/>
+
+  <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/btn_cancel"
+    android:id="@+id/btn_cancel"
+    android:layout_alignParentBottom="true"
+    android:layout_alignLeft="@+id/textView2"
+    android:layout_alignStart="@+id/textView2"/>
+
+  <Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/btn_save"
+    android:id="@+id/btn_save"
+    android:layout_alignTop="@+id/btn_cancel"
+    android:layout_alignRight="@+id/active_switch"
+    android:layout_alignEnd="@+id/active_switch"/>
 
 </RelativeLayout>

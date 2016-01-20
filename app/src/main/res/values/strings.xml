@@ -4,11 +4,15 @@
   <string name="hello_world">Hello world!</string>
   <string name="action_settings">Settings</string>
   <string name="btn_send_message">Send message</string>
+  <string name="btn_cancel">Cancelar</string>
+  <string name="btn_save">Guardar</string>
   <string name="hint_telephone_num">Numero de telefono</string>
   <string name="hint_message_txt">Mensaje</string>
   <string name="title_activity_settings">Configuracion</string>
   <string name="settings_toggle">Activo</string>
   <string name="settings_button">Configurar fecha</string>
+  <string name="max_msgs">Maxima cantidad de mensajes a enviar</string>
+  <string name="checkbox_text">Notificar al enviar</string>
   <string-array name="dates_array">
     <item>Primer dia del mes</item>
     <item>Ultimo dia del mes</item>
