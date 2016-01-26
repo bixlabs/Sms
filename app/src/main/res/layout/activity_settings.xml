@@ -42,7 +42,7 @@
     android:background="@drawable/back"
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
-    android:layout_above="@+id/textView2"
+    android:layout_above="@+id/maxMsgsText"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
     android:layout_marginBottom="41dp"/>
@@ -57,23 +57,12 @@
     android:layout_centerHorizontal="true"
     android:layout_marginBottom="27dp"/>
 
-  <Spinner
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/spinner"
-    android:layout_above="@+id/editTextPhone"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_marginBottom="30dp"
-    android:layout_alignRight="@+id/textView4"
-    android:layout_alignEnd="@+id/textView4"/>
-
   <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:text="@string/max_msgs"
-    android:id="@+id/textView2"
+    android:id="@+id/maxMsgsText"
     android:textColor="#111111"
     android:layout_above="@+id/editTextMax"
     android:layout_centerHorizontal="true"/>
@@ -99,20 +88,21 @@
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:text="@string/select_hour"
-    android:id="@+id/textView3"
+    android:id="@+id/hourText"
     android:textColor="#111111"
-    android:layout_above="@+id/spinner"
-    android:layout_alignRight="@+id/editTextMessage"
-    android:layout_alignEnd="@+id/editTextMessage"/>
+    android:layout_below="@+id/active_switch"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
+    android:layout_marginTop="37dp"/>
 
   <ImageButton
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/btn_hour"
-    android:src="@drawable/ic_timer_black_24dp"
+    android:src="@drawable/ic_alarm_black_24dp"
     android:background="#ffffff"
     android:contentDescription="@string/btn_save"
-    android:layout_alignTop="@+id/spinner"
+    android:layout_below="@+id/hourText"
     android:layout_alignLeft="@+id/active_switch"
     android:layout_alignStart="@+id/active_switch"
     android:layout_alignRight="@+id/active_switch"
@@ -123,10 +113,23 @@
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:text="@string/select_day"
-    android:id="@+id/textView4"
+    android:id="@+id/dateText"
     android:textColor="#111111"
-    android:layout_above="@+id/spinner"
+    android:layout_above="@+id/btn_hour"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"/>
+
+  <ImageButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/btn_date"
+    android:src="@drawable/ic_date_range_black_24dp"
+    android:background="#ffffff"
+    android:contentDescription="@string/btn_save"
+    android:layout_below="@+id/dateText"
+    android:layout_alignBottom="@+id/btn_hour"
+    android:layout_toLeftOf="@+id/editTextMax"
+    android:layout_alignLeft="@+id/maxMsgsText"
+    android:layout_alignStart="@+id/maxMsgsText"/>
 
 </RelativeLayout>

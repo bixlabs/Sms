@@ -21,4 +21,5 @@
     <item>Día personalizado</item>
   </string-array>
   <string name="title_activity_splash_screen">SplashScreenActivity</string>
+  <string name="title_activity_receiver">ReceiverActivity</string>
 </resources>
