@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import static uy.com.bix.app.smsproject.classes.Constants.MSG_SENT;
 
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -39,10 +37,10 @@ public class SettingsActivity extends AppCompatActivity {
 
 	private EditText mEditPhone, mEditMessage, mEditMax;
 	private Switch isActive;
-	private CheckBox notify;
-	int newYear, newMonth, newDay, newHour, newMinute;
+	private CheckBox notifyWhenSending;
+	int newYear, newMonth, expirationDay, expirationHour, expirationMinute;
 	private ImageButton mButtonHour;
-	boolean lastDay;
+	boolean isLastDay;
 
 	static final int DATE_DIALOG_ID = 0;
 	static final int TIME_DIALOG_ID = 1111;
@@ -59,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
 		final Calendar cal = Calendar.getInstance();
 		newYear = cal.get(Calendar.YEAR);
 		newMonth = cal.get(Calendar.MONTH);
-		newDay = cal.get(Calendar.DATE);
+		expirationDay = cal.get(Calendar.DATE);
 
 		// Get saved user settings
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
@@ -72,12 +70,12 @@ public class SettingsActivity extends AppCompatActivity {
 		mEditMax.setText(settings.getString("Max", "1"), TextView.BufferType.EDITABLE);
 		isActive = (Switch) findViewById(R.id.active_switch);
 		isActive.setChecked(settings.getBoolean("Active", false));
-		notify = (CheckBox) findViewById(R.id.notify_checkBox);
-		notify.setChecked(settings.getBoolean("Notify", false));
-		newDay = settings.getInt("Day", 1);
-		newHour = settings.getInt("Hour", 23);
-		newMinute = settings.getInt("Minute", 30);
-		lastDay = settings.getBoolean("LastDay", false);
+		notifyWhenSending = (CheckBox) findViewById(R.id.notify_checkBox);
+		notifyWhenSending.setChecked(settings.getBoolean("Notify", false));
+		expirationDay = settings.getInt("Day", 1);
+		expirationHour = settings.getInt("Hour", 23);
+		expirationMinute = settings.getInt("Minute", 30);
+		isLastDay = settings.getBoolean("LastDay", false);
 
 		onTimeButtonClick();
 		onDateButtonClick();
@@ -85,44 +83,44 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 	public void saveOnButtonClick() {
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("Phone", mEditPhone.getText().toString());
-		editor.putString("Message", mEditMessage.getText().toString());
-		editor.putString("Max", mEditMax.getText().toString());
-		editor.putBoolean("Active", isActive.isChecked());
-		editor.putBoolean("Notify", notify.isChecked());
-		editor.putBoolean("LastDay", lastDay);
-		editor.putInt("Day", newDay);
-		editor.putInt("Hour", newHour);
-		editor.putInt("Minute", newMinute);
-		editor.apply();
+		if (isActive.isChecked()) {
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putString("Phone", mEditPhone.getText().toString());
+			editor.putString("Message", mEditMessage.getText().toString());
+			editor.putString("Max", mEditMax.getText().toString());
+			editor.putBoolean("Active", isActive.isChecked());
+			editor.putBoolean("Notify", notifyWhenSending.isChecked());
+			editor.putBoolean("LastDay", isLastDay);
+			editor.putInt("Day", expirationDay);
+			editor.putInt("Hour", expirationHour);
+			editor.putInt("Minute", expirationMinute);
+			editor.apply();
 
-		DateTime sendingDate = DateTime.now();
-		sendingDate = sendingDate.withMinuteOfHour(newMinute);
-		sendingDate = sendingDate.withHourOfDay(newHour);
-		sendingDate = sendingDate.withDayOfMonth(newDay);
-		System.out.println(sendingDate);
-		System.out.println(lastDay);
+			DateTime sendingDate = DateTime.now();
+			sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
+			sendingDate = sendingDate.withHourOfDay(expirationHour);
+			sendingDate = sendingDate.withDayOfMonth(expirationDay);
+			System.out.println(sendingDate);
+			System.out.println(isLastDay);
 
-		// We need to register the receiver to be able to know if the messages are sent
-		AlertReceiver alertReceiver = new AlertReceiver();
-		contextOfApplication.registerReceiver(alertReceiver, new IntentFilter(MSG_SENT));
-		System.out.println("RECEIVER REGISTERED");
+			// The date must be in milliseconds
+			long whenToFireTask = sendingDate.getMillis();
 
-		// The date must be in milliseconds
-		long whenToFireTask = sendingDate.getMillis();
-
-		scheduleAlarm(whenToFireTask);
+			scheduleAlarm(whenToFireTask);
+		}
+		else {
+			Toast.makeText(contextOfApplication, "Para guardar, debes activar la aplicación", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		if (id == DATE_DIALOG_ID) {
-			return new DatePickerDialog(this, dPickerListener, newYear, newMonth, newDay);
+			return new DatePickerDialog(this, dPickerListener, newYear, newMonth, expirationDay);
 		}
 		else if (id == TIME_DIALOG_ID) {
-			return new TimePickerDialog(this, timePickerListener, newHour, newMinute, false);
+			return new TimePickerDialog(this, timePickerListener, expirationHour, expirationMinute, false);
 		}
 		return null;
 	}
@@ -155,15 +153,15 @@ public class SettingsActivity extends AppCompatActivity {
 			public void onDateSet(DatePicker view, int year, int month, int day) {
 				newYear = year;
 				newMonth = month + 1;
-				newDay = day;
-				lastDay = false;
+				expirationDay = day;
+				isLastDay = false;
 
-				// If the day selected is the last we update the boolean lastDay
+				// If the day selected is the last we update the boolean isisLastDay
 				DateTime dt = DateTime.now();
 				dt = dt.dayOfMonth().withMaximumValue();
 				int last = dt.getDayOfMonth();
-				if (newDay == last) {
-					lastDay = true;
+				if (expirationDay == last) {
+					isLastDay = true;
 				}
 			}
 	};
@@ -173,8 +171,8 @@ public class SettingsActivity extends AppCompatActivity {
 
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minutes) {
-			newHour   = hourOfDay;
-			newMinute = minutes;
+			expirationHour   = hourOfDay;
+			expirationMinute = minutes;
 		}
 
 	};
@@ -204,21 +202,19 @@ public class SettingsActivity extends AppCompatActivity {
 
 	public void scheduleAlarm(long dateOfFiring)
 	{
-		// time at which alarm will be scheduled here alarm is scheduled at 1 day from current time,
-		// we fetch  the current time in milliseconds and added 1 day time
-		// i.e. 24*60*60*1000= 86,400,000   milliseconds in a day
-
 		// create an Intent and set the class which will execute when Alarm triggers, here we have
 		// given AlertReceiver in the Intent, the onReceive() method of this class will execute when
-		// alarm triggers and
-		//we will write the code to send SMS inside onReceive() method pf AlertReceiver class
+		// alarm triggers
 		Intent intentAlarm = new Intent(this, AlertReceiver.class);
 
-		// create the object
+		// Create the object
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		//set the alarm for particular time
-		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfFiring, PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-		Toast.makeText(this, "Alarm Scheduled", Toast.LENGTH_LONG).show();
+		// Cancel any existing alarm for this app
+		alarmManager.cancel(pendingIntent);
+
+		// set the alarm for particular time
+		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfFiring, pendingIntent);
 	}
 }

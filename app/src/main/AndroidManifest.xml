@@ -39,7 +39,11 @@
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" >
         </activity>
-        <receiver android:name=".classes.AlertReceiver"/>
+        <receiver android:name=".classes.AlertReceiver">
+            <intent-filter>
+                <action android:name="SMS_SENT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
