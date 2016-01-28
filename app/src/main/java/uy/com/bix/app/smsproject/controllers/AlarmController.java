@@ -99,6 +99,5 @@ public class AlarmController extends AppCompatActivity {
 			maxMessagesToSend --;
 			stopForMax = maxMessagesToSend == 0;
 		}
-
 	}
 }
