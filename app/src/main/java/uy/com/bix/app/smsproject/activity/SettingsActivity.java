@@ -63,9 +63,9 @@ public class SettingsActivity extends AppCompatActivity {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 
 		mEditPhone = (EditText)findViewById(R.id.editTextPhone);
-		mEditPhone.setText(settings.getString("Phone", "1"), TextView.BufferType.EDITABLE);
+		mEditPhone.setText(settings.getString("Phone", ""), TextView.BufferType.EDITABLE);
 		mEditMessage = (EditText)findViewById(R.id.editTextMessage);
-		mEditMessage.setText(settings.getString("Message", "1"), TextView.BufferType.EDITABLE);
+		mEditMessage.setText(settings.getString("Message", ""), TextView.BufferType.EDITABLE);
 		mEditMax = (EditText)findViewById(R.id.editTextMax);
 		mEditMax.setText(settings.getString("Max", "1"), TextView.BufferType.EDITABLE);
 		isActive = (Switch) findViewById(R.id.active_switch);
@@ -83,35 +83,37 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 	public void saveOnButtonClick() {
+
+		// We save the user preferences using the default shared preferences
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("Phone", mEditPhone.getText().toString());
+		editor.putString("Message", mEditMessage.getText().toString());
+		editor.putString("Max", mEditMax.getText().toString());
+		editor.putBoolean("Active", isActive.isChecked());
+		editor.putBoolean("Notify", notifyWhenSending.isChecked());
+		editor.putBoolean("LastDay", isLastDay);
+		editor.putInt("Day", expirationDay);
+		editor.putInt("Hour", expirationHour);
+		editor.putInt("Minute", expirationMinute);
+		editor.apply();
+
+		DateTime sendingDate = DateTime.now();
+		sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
+		sendingDate = sendingDate.withHourOfDay(expirationHour);
+		sendingDate = sendingDate.withDayOfMonth(expirationDay);
+		System.out.println(sendingDate);
+		System.out.println(isLastDay);
+
+		// The date must be in milliseconds
+		long whenToFireTask = sendingDate.getMillis();
+
 		if (isActive.isChecked()) {
-			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putString("Phone", mEditPhone.getText().toString());
-			editor.putString("Message", mEditMessage.getText().toString());
-			editor.putString("Max", mEditMax.getText().toString());
-			editor.putBoolean("Active", isActive.isChecked());
-			editor.putBoolean("Notify", notifyWhenSending.isChecked());
-			editor.putBoolean("LastDay", isLastDay);
-			editor.putInt("Day", expirationDay);
-			editor.putInt("Hour", expirationHour);
-			editor.putInt("Minute", expirationMinute);
-			editor.apply();
-
-			DateTime sendingDate = DateTime.now();
-			sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
-			sendingDate = sendingDate.withHourOfDay(expirationHour);
-			sendingDate = sendingDate.withDayOfMonth(expirationDay);
-			System.out.println(sendingDate);
-			System.out.println(isLastDay);
-
-			// The date must be in milliseconds
-			long whenToFireTask = sendingDate.getMillis();
-
 			scheduleAlarm(whenToFireTask);
 		}
-		else {
-			Toast.makeText(contextOfApplication, "Para guardar, debes activar la aplicación", Toast.LENGTH_LONG).show();
-		}
+
+		Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
+		onBackPressed();
 	}
 
 	@Override
