@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
 	private EditText mEditPhone, mEditMessage, mEditMax;
 	private Switch isActive;
 	private CheckBox notifyWhenSending;
-	int newYear, newMonth, expirationDay, expirationHour, expirationMinute;
+	int expirationYear, expirationMonth, expirationDay, expirationHour, expirationMinute;
 	private ImageButton mButtonHour;
 	boolean isLastDay;
 
@@ -54,11 +54,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 		JodaTimeAndroid.init(this);
 
-		final Calendar cal = Calendar.getInstance();
-		newYear = cal.get(Calendar.YEAR);
-		newMonth = cal.get(Calendar.MONTH);
-		expirationDay = cal.get(Calendar.DATE);
-
 		// Get saved user settings
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 
@@ -72,6 +67,10 @@ public class SettingsActivity extends AppCompatActivity {
 		isActive.setChecked(settings.getBoolean("Active", false));
 		notifyWhenSending = (CheckBox) findViewById(R.id.notify_checkBox);
 		notifyWhenSending.setChecked(settings.getBoolean("Notify", false));
+		expirationYear = settings.getInt("Year", 2016);
+
+		// The month in the date picker is in 0-11 range
+		expirationMonth = settings.getInt("Month", 1) - 1;
 		expirationDay = settings.getInt("Day", 1);
 		expirationHour = settings.getInt("Hour", 23);
 		expirationMinute = settings.getInt("Minute", 30);
@@ -93,6 +92,8 @@ public class SettingsActivity extends AppCompatActivity {
 		editor.putBoolean("Active", isActive.isChecked());
 		editor.putBoolean("Notify", notifyWhenSending.isChecked());
 		editor.putBoolean("LastDay", isLastDay);
+		editor.putInt("Year", expirationYear);
+		editor.putInt("Month", expirationMonth);
 		editor.putInt("Day", expirationDay);
 		editor.putInt("Hour", expirationHour);
 		editor.putInt("Minute", expirationMinute);
@@ -101,9 +102,9 @@ public class SettingsActivity extends AppCompatActivity {
 		DateTime sendingDate = DateTime.now();
 		sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
 		sendingDate = sendingDate.withHourOfDay(expirationHour);
+		sendingDate = sendingDate.withYear(expirationYear);
+		sendingDate = sendingDate.withMonthOfYear(expirationMonth);
 		sendingDate = sendingDate.withDayOfMonth(expirationDay);
-		System.out.println(sendingDate);
-		System.out.println(isLastDay);
 
 		// The date must be in milliseconds
 		long whenToFireTask = sendingDate.getMillis();
@@ -119,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		if (id == DATE_DIALOG_ID) {
-			return new DatePickerDialog(this, dPickerListener, newYear, newMonth, expirationDay);
+			return new DatePickerDialog(this, dPickerListener, expirationYear, expirationMonth, expirationDay);
 		}
 		else if (id == TIME_DIALOG_ID) {
 			return new TimePickerDialog(this, timePickerListener, expirationHour, expirationMinute, false);
@@ -153,13 +154,14 @@ public class SettingsActivity extends AppCompatActivity {
 		= new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int month, int day) {
-				newYear = year;
-				newMonth = month + 1;
+				expirationYear = year;
+				expirationMonth = month + 1;
 				expirationDay = day;
 				isLastDay = false;
 
-				// If the day selected is the last we update the boolean isisLastDay
+				// If the day selected is the last we update the boolean isLastDay
 				DateTime dt = DateTime.now();
+				dt = dt.withMonthOfYear(expirationMonth);
 				dt = dt.dayOfMonth().withMaximumValue();
 				int last = dt.getDayOfMonth();
 				if (expirationDay == last) {
