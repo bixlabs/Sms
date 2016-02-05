@@ -1,5 +1,6 @@
 package uy.com.bix.app.smsproject.activity;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -8,66 +9,84 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
+import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 
-import java.util.Calendar;
-
 import uy.com.bix.app.smsproject.R;
 import uy.com.bix.app.smsproject.classes.AlertReceiver;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
-	private EditText mEditPhone, mEditMessage, mEditMax;
-	private Switch isActive;
-	private CheckBox notifyWhenSending;
 	int expirationYear, expirationMonth, expirationDay, expirationHour, expirationMinute;
-	private ImageButton mButtonHour;
-	boolean isLastDay;
+	boolean isLastDay, isActive;
+	private AppCompatDelegate mDelegate;
 
 	static final int DATE_DIALOG_ID = 0;
 	static final int TIME_DIALOG_ID = 1111;
+	static final String MESSAGE_KEY = "Message";
+	static final String NUMBER_KEY = "Phone";
+	static final String MAX_KEY = "Max";
+	static final String DATE_KEY = "btnDateFilter";
+	static final String TIME_KEY = "btnTimeFilter";
 	public static Context contextOfApplication;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		getDelegate().installViewFactory();
+		getDelegate().onCreate(savedInstanceState);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);
+		addPreferencesFromResource(R.xml.settings_activity);
 		contextOfApplication = getApplicationContext();
+
+		Preference btnDateFilter = findPreference("btnDateFilter");
+		btnDateFilter.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				showDialog(DATE_DIALOG_ID);
+				return false;
+			}
+		});
+
+		Preference btnTimeFilter = findPreference("btnTimeFilter");
+		btnTimeFilter.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				showDialog(TIME_DIALOG_ID);
+				return false;
+			}
+		});
 
 		JodaTimeAndroid.init(this);
 
 		// Get saved user settings
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-
-		mEditPhone = (EditText)findViewById(R.id.editTextPhone);
-		mEditPhone.setText(settings.getString("Phone", ""), TextView.BufferType.EDITABLE);
-		mEditMessage = (EditText)findViewById(R.id.editTextMessage);
-		mEditMessage.setText(settings.getString("Message", ""), TextView.BufferType.EDITABLE);
-		mEditMax = (EditText)findViewById(R.id.editTextMax);
-		mEditMax.setText(settings.getString("Max", "1"), TextView.BufferType.EDITABLE);
-		isActive = (Switch) findViewById(R.id.active_switch);
-		isActive.setChecked(settings.getBoolean("Active", false));
-		notifyWhenSending = (CheckBox) findViewById(R.id.notify_checkBox);
-		notifyWhenSending.setChecked(settings.getBoolean("Notify", false));
-		expirationYear = settings.getInt("Year", 2016);
 
 		// The month in the date picker is in 0-11 range
 		expirationMonth = settings.getInt("Month", 1) - 1;
@@ -75,25 +94,173 @@ public class SettingsActivity extends AppCompatActivity {
 		expirationHour = settings.getInt("Hour", 23);
 		expirationMinute = settings.getInt("Minute", 30);
 		isLastDay = settings.getBoolean("LastDay", false);
+		expirationYear = settings.getInt("Year", 2016);
 
-		onTimeButtonClick();
-		onDateButtonClick();
+		initSummary(getPreferenceScreen());
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		getDelegate().onPostCreate(savedInstanceState);
+	}
 
-	public void saveOnButtonClick() {
+	public ActionBar getSupportActionBar() {
+		return getDelegate().getSupportActionBar();
+	}
+
+	public void setSupportActionBar(@Nullable Toolbar toolbar) {
+		getDelegate().setSupportActionBar(toolbar);
+	}
+
+	@Override
+	public MenuInflater getMenuInflater() {
+		return getDelegate().getMenuInflater();
+	}
+
+	@Override
+	public void setContentView(@LayoutRes int layoutResID) {
+		getDelegate().setContentView(layoutResID);
+	}
+
+	@Override
+	public void setContentView(View view) {
+		getDelegate().setContentView(view);
+	}
+
+	@Override
+	public void setContentView(View view, ViewGroup.LayoutParams params) {
+		getDelegate().setContentView(view, params);
+	}
+
+	@Override
+	public void addContentView(View view, ViewGroup.LayoutParams params) {
+		getDelegate().addContentView(view, params);
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		getDelegate().onPostResume();
+	}
+
+	@Override
+	protected void onTitleChanged(CharSequence title, int color) {
+		super.onTitleChanged(title, color);
+		getDelegate().setTitle(title);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		getDelegate().onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		getDelegate().onStop();
+		saveSettings();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		getDelegate().onDestroy();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Set up a listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences()
+			.registerOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Unregister the listener whenever a key changes
+		getPreferenceScreen().getSharedPreferences()
+			.unregisterOnSharedPreferenceChangeListener(this);
+		saveSettings();
+	}
+
+	public void invalidateOptionsMenu() {
+		getDelegate().invalidateOptionsMenu();
+	}
+
+	private AppCompatDelegate getDelegate() {
+		if (mDelegate == null) {
+			mDelegate = AppCompatDelegate.create(this, null);
+		}
+		return mDelegate;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu_settings, menu);
+		return true;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+																				String key) {
+		updatePrefSummary(findPreference(key));
+	}
+
+	private void initSummary(Preference p) {
+		if (p instanceof PreferenceGroup) {
+			PreferenceGroup pGrp = (PreferenceGroup) p;
+			for (int i = 0; i < pGrp.getPreferenceCount(); i++) {
+				initSummary(pGrp.getPreference(i));
+			}
+		}
+		else {
+			updatePrefSummary(p);
+		}
+	}
+
+	private void updatePrefSummary(Preference p) {
+		String key = p.getKey();
+		if (p instanceof EditTextPreference) {
+			EditTextPreference editTextPref = (EditTextPreference) p;
+			if (editTextPref.getText() == null || editTextPref.getText().equals("")) {
+				switch(p.getKey()) {
+					case MESSAGE_KEY:
+						p.setSummary("Mensaje a enviar");
+						break;
+					case MAX_KEY:
+						p.setSummary("Tope maximo de mensajes a enviar");
+						break;
+					case NUMBER_KEY:
+						p.setSummary("Numero destinatario de la donacion");
+						break;
+				}
+			}
+			else {
+				p.setSummary(editTextPref.getText());
+			}
+		}
+		else if (key.equals(DATE_KEY)) {
+			p.setSummary(String.valueOf(expirationDay) + "/" +
+				String.valueOf(expirationMonth + 1) + "/" +
+				String.valueOf(expirationYear));
+		}
+		else if (key.equals(TIME_KEY)) {
+			p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
+		}
+
+	}
+
+	public void saveSettings() {
 
 		// We save the user preferences using the default shared preferences
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("Phone", mEditPhone.getText().toString());
-		editor.putString("Message", mEditMessage.getText().toString());
-		editor.putString("Max", mEditMax.getText().toString());
-		editor.putBoolean("Active", isActive.isChecked());
-		editor.putBoolean("Notify", notifyWhenSending.isChecked());
-		editor.putBoolean("LastDay", isLastDay);
 		editor.putInt("Year", expirationYear);
-		editor.putInt("Month", expirationMonth);
+		editor.putInt("Month", expirationMonth + 1);
 		editor.putInt("Day", expirationDay);
 		editor.putInt("Hour", expirationHour);
 		editor.putInt("Minute", expirationMinute);
@@ -103,18 +270,19 @@ public class SettingsActivity extends AppCompatActivity {
 		sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
 		sendingDate = sendingDate.withHourOfDay(expirationHour);
 		sendingDate = sendingDate.withYear(expirationYear);
-		sendingDate = sendingDate.withMonthOfYear(expirationMonth);
+		sendingDate = sendingDate.withMonthOfYear(expirationMonth + 1);
 		sendingDate = sendingDate.withDayOfMonth(expirationDay);
 
 		// The date must be in milliseconds
 		long whenToFireTask = sendingDate.getMillis();
 
-		if (isActive.isChecked()) {
+		isActive = settings.getBoolean("Active", false);
+		if (isActive) {
 			scheduleAlarm(whenToFireTask);
+			System.out.println(sendingDate);
 		}
 
 		Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
-		onBackPressed();
 	}
 
 	@Override
@@ -128,45 +296,25 @@ public class SettingsActivity extends AppCompatActivity {
 		return null;
 	}
 
-	private void onTimeButtonClick() {
-		mButtonHour = (ImageButton) findViewById(R.id.btn_hour);
-
-		mButtonHour.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showDialog(TIME_DIALOG_ID);
-			}
-		});
-	}
-
-	private void onDateButtonClick() {
-		mButtonHour = (ImageButton) findViewById(R.id.btn_date);
-
-		mButtonHour.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showDialog(DATE_DIALOG_ID);
-			}
-		});
-	}
-
 	private DatePickerDialog.OnDateSetListener dPickerListener
 		= new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int month, int day) {
 				expirationYear = year;
-				expirationMonth = month + 1;
+				expirationMonth = month;
 				expirationDay = day;
 				isLastDay = false;
 
 				// If the day selected is the last we update the boolean isLastDay
 				DateTime dt = DateTime.now();
-				dt = dt.withMonthOfYear(expirationMonth);
+				dt = dt.withMonthOfYear(expirationMonth + 1);
 				dt = dt.dayOfMonth().withMaximumValue();
 				int last = dt.getDayOfMonth();
 				if (expirationDay == last) {
 					isLastDay = true;
 				}
+
+				updatePrefSummary(findPreference(DATE_KEY));
 			}
 	};
 
@@ -177,32 +325,10 @@ public class SettingsActivity extends AppCompatActivity {
 		public void onTimeSet(TimePicker view, int hourOfDay, int minutes) {
 			expirationHour   = hourOfDay;
 			expirationMinute = minutes;
+			updatePrefSummary(findPreference(TIME_KEY));
 		}
 
 	};
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_settings, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_save) {
-
-			saveOnButtonClick();
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
 
 	public void scheduleAlarm(long dateOfFiring)
 	{
