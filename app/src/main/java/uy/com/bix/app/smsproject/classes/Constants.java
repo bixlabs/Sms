@@ -7,5 +7,6 @@ public final class Constants {
 	}
 
 	public static final String MSG_SENT = "SMS_SENT";
-	public static final String MSG_DELIVERED = "SMS_DELIVERED";
+	public static final int DEFAULT_HOUR = 23;
+	public static final int DEFAULT_MINUTES = 30;
 }

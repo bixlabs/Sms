@@ -9,7 +9,7 @@
   <EditTextPreference
     android:key="Phone"
     android:title="Número"
-    android:dialogTitle="Ingrese número"
+    android:dialogTitle="Ingrese un número"
     android:inputType="phone">
 
   </EditTextPreference>
@@ -18,14 +18,14 @@
     android:key="Message"
     android:title="Mensaje"
     android:dialogTitle="Ingrese texto"
-    android:inputType="phone">
+    android:inputType="text">
 
   </EditTextPreference>
 
   <EditTextPreference
     android:key="Max"
     android:title="Máxima cantidad de mensajes"
-    android:dialogTitle="Ingrese texto"
+    android:dialogTitle="Ingrese un número"
     android:inputType="number">
 
   </EditTextPreference>

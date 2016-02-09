@@ -34,7 +34,67 @@ public class AlarmController extends AppCompatActivity {
 		return instance;
 	}
 
-	public void prepareAndSendMessage (Context context) {
+	/**
+	 * This function configures next month's expiration date for the app to be executed.
+	 * @param actualExpirationDate
+	 * @param context
+	 */
+	public void configureNextMonthAlarm (DateTime actualExpirationDate, Context context) {
+
+		//We need to configure next month's alarm
+		DateTime nextExpirationDate = actualExpirationDate.withMinuteOfHour(expirationMinute);
+		nextExpirationDate = nextExpirationDate.withHourOfDay(expirationHour);
+		nextExpirationDate = nextExpirationDate.plusMonths(1);
+		int lastDayOfNextMonth = nextExpirationDate.dayOfMonth().withMaximumValue().getDayOfMonth();
+
+		//If the expirationDay is the last day of the month we must handle it differently
+		if (isLastDay) {
+			expirationDay = lastDayOfNextMonth;
+			nextExpirationDate = nextExpirationDate.withDayOfMonth(expirationDay);
+		}
+		else {
+			if (expirationDay > nextExpirationDate.getDayOfMonth() && expirationDay <= lastDayOfNextMonth) {
+
+				// If the expiration date isn't last day but is bigger than this month's capacity
+				// and smaller or equal than next month capacity
+				nextExpirationDate = nextExpirationDate.withDayOfMonth(expirationDay);
+			}
+		}
+
+		// We need to update the preferences of the user according to the month
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putInt("Year", nextExpirationDate.getYear());
+		editor.putInt("Month", nextExpirationDate.getMonthOfYear());
+		editor.putInt("Day", nextExpirationDate.getDayOfMonth());
+		editor.apply();
+
+		// The date must be in milliseconds
+		dateOfNextFiring = nextExpirationDate.getMillis();
+		System.out.println("Esta Fecha:");
+		System.out.println(actualExpirationDate);
+		System.out.println("Proxima Fecha:");
+		System.out.println(nextExpirationDate);
+
+		Intent intentAlarm = new Intent(context, AlertReceiver.class);
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intentAlarm,
+			PendingIntent.FLAG_UPDATE_CURRENT);
+
+		// Cancel any existing alarm for this app
+		alarmManager.cancel(pendingIntent);
+
+		//set the alarm for particular time
+		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfNextFiring, pendingIntent);
+	}
+
+
+	/**
+	 * This function is in charge of loading user preferences previously set.
+	 * The function only does this job if the app is active
+	 * @param context
+	 */
+	public void loadPreferencesAndSendMessages (Context context) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 		JodaTimeAndroid.init(context);
 		isActive = settings.getBoolean("Active", false);
@@ -54,48 +114,8 @@ public class AlarmController extends AppCompatActivity {
 			textMessage = settings.getString("Message", "Hello");
 			maxMessages = Integer.parseInt(settings.getString("Max", "1"));
 
-			//We need to configure next month's alarm
 			DateTime actualExpirationDate = DateTime.now();
-			DateTime nextExpirationDate = actualExpirationDate.withMinuteOfHour(expirationMinute);
-			nextExpirationDate = nextExpirationDate.withHourOfDay(expirationHour);
-			nextExpirationDate = nextExpirationDate.plusMonths(1);
-			int lastDayOfNextMonth = nextExpirationDate.dayOfMonth().withMaximumValue().getDayOfMonth();
-
-			//If the expirationDay is the last day of the month we must handle it differently
-			if (isLastDay) {
-				expirationDay = lastDayOfNextMonth;
-				nextExpirationDate = nextExpirationDate.withDayOfMonth(expirationDay);
-			}
-			else {
-				if (expirationDay > nextExpirationDate.getDayOfMonth() && expirationDay <= lastDayOfNextMonth) {
-
-					// If the expiration date isn't last day but is bigger than this month's capacity 
-					// and smaller or equal than next month capacity			
-					nextExpirationDate = nextExpirationDate.withDayOfMonth(expirationDay);
-				}
-			}
-
-			// We need to update the preferneces of the user according to the month
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putInt("Year", nextExpirationDate.getYear());
-			editor.putInt("Month", nextExpirationDate.getMonthOfYear());
-			editor.putInt("Day", nextExpirationDate.getDayOfMonth());
-			editor.apply();
-
-			// The date must be in milliseconds
-			dateOfNextFiring = nextExpirationDate.getMillis();
-			System.out.println("Esta Fecha:");
-			System.out.println(actualExpirationDate);
-			System.out.println("Proxima Fecha:");
-			System.out.println(nextExpirationDate);
-
-			Intent intentAlarm = new Intent(context, AlertReceiver.class);
-			AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intentAlarm, 
-				PendingIntent.FLAG_UPDATE_CURRENT);
-
-			//set the alarm for particular time
-			alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfNextFiring, pendingIntent);
+			configureNextMonthAlarm(actualExpirationDate, context);
 
 			// If the notification is activated, we must notify the user
 			if (notifyWhenSending) {
@@ -121,7 +141,7 @@ public class AlarmController extends AppCompatActivity {
 			msgController.sendMessage(phoneNum, text, context);
 
 			// We update the stopping criteria
-			maxMessagesToSend --;
+			maxMessagesToSend--;
 			stopForMax = maxMessagesToSend == 0;
 			actualTime = DateTime.now();
 			stopForChangeOfDay = actualTime.getDayOfMonth() != expirationDate.getDayOfMonth();

@@ -24,12 +24,13 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 
@@ -84,17 +85,18 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		});
 
 		JodaTimeAndroid.init(this);
+		DateTime today = DateTime.now();
 
 		// Get saved user settings
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 
 		// The month in the date picker is in 0-11 range
-		expirationMonth = settings.getInt("Month", 1) - 1;
-		expirationDay = settings.getInt("Day", 1);
-		expirationHour = settings.getInt("Hour", 23);
-		expirationMinute = settings.getInt("Minute", 30);
+		expirationMonth = settings.getInt("Month", today.getMonthOfYear()) - 1;
+		expirationDay = settings.getInt("Day", today.getDayOfMonth());
+		expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
+		expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
 		isLastDay = settings.getBoolean("LastDay", false);
-		expirationYear = settings.getInt("Year", 2016);
+		expirationYear = settings.getInt("Year", today.getYear());
 
 		initSummary(getPreferenceScreen());
 	}
@@ -172,16 +174,20 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	protected void onResume() {
 		super.onResume();
+
 		// Set up a listener whenever a key changes
-		getPreferenceScreen().getSharedPreferences()
+		getPreferenceScreen()
+			.getSharedPreferences()
 			.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+
 		// Unregister the listener whenever a key changes
-		getPreferenceScreen().getSharedPreferences()
+		getPreferenceScreen()
+			.getSharedPreferences()
 			.unregisterOnSharedPreferenceChangeListener(this);
 		saveSettings();
 	}
