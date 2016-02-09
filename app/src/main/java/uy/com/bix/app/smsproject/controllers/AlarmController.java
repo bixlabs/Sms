@@ -16,6 +16,8 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.DateTime;
 
 import uy.com.bix.app.smsproject.classes.AlertReceiver;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
 
 public class AlarmController extends AppCompatActivity {
 
@@ -101,20 +103,20 @@ public class AlarmController extends AppCompatActivity {
 
 		// We make sure the app is active to send messages
 		if (isActive) {
+			DateTime actualExpirationDate = DateTime.now();
 
 			// We get all the information the user set
 			notifyWhenSending = settings.getBoolean("Notify", false);
-			expirationYear = settings.getInt("Year", 2015);
-			expirationMonth = settings.getInt("Month", 1);
-			expirationDay = settings.getInt("Day", 1);
-			expirationHour = settings.getInt("Hour", 23);
-			expirationMinute = settings.getInt("Minute", 30);
+			expirationYear = settings.getInt("Year", actualExpirationDate.getYear());
+			expirationMonth = settings.getInt("Month", actualExpirationDate.getMonthOfYear());
+			expirationDay = settings.getInt("Day", actualExpirationDate.getDayOfMonth());
+			expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
+			expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
 			isLastDay = settings.getBoolean("LastDay", false);
 			phoneNumber = settings.getString("Phone", "1");
 			textMessage = settings.getString("Message", "Hello");
 			maxMessages = Integer.parseInt(settings.getString("Max", "1"));
 
-			DateTime actualExpirationDate = DateTime.now();
 			configureNextMonthAlarm(actualExpirationDate, context);
 
 			// If the notification is activated, we must notify the user
