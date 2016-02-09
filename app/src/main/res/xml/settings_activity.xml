@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <SwitchPreference
+    android:key="Active"
+    android:title="Activar aplicación" >
+
+  </SwitchPreference>
+
+  <EditTextPreference
+    android:key="Phone"
+    android:title="Número"
+    android:dialogTitle="Ingrese un número"
+    android:inputType="phone">
+
+  </EditTextPreference>
+
+  <EditTextPreference
+    android:key="Message"
+    android:title="Mensaje"
+    android:dialogTitle="Ingrese texto"
+    android:inputType="text">
+
+  </EditTextPreference>
+
+  <EditTextPreference
+    android:key="Max"
+    android:title="Máxima cantidad de mensajes"
+    android:dialogTitle="Ingrese un número"
+    android:inputType="number">
+
+  </EditTextPreference>
+
+  <Preference
+    android:key="btnDateFilter"
+    android:title="Seleccionar fecha" />
+
+  <Preference
+  android:key="btnTimeFilter"
+  android:title="Hora de ejecucion" />
+
+  <CheckBoxPreference
+    android:key="Notify"
+    android:title="Notificar antes de enviar mensajes">
+
+  </CheckBoxPreference>
+
+</PreferenceScreen>
