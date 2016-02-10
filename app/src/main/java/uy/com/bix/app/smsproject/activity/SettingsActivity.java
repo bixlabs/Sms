@@ -17,12 +17,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,14 +103,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		getDelegate().onPostCreate(savedInstanceState);
 	}
 
-	public ActionBar getSupportActionBar() {
-		return getDelegate().getSupportActionBar();
-	}
-
-	public void setSupportActionBar(@Nullable Toolbar toolbar) {
-		getDelegate().setSupportActionBar(toolbar);
-	}
-
 	@Override
 	public MenuInflater getMenuInflater() {
 		return getDelegate().getMenuInflater();
@@ -123,16 +111,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	public void setContentView(@LayoutRes int layoutResID) {
 		getDelegate().setContentView(layoutResID);
-	}
-
-	@Override
-	public void setContentView(View view) {
-		getDelegate().setContentView(view);
-	}
-
-	@Override
-	public void setContentView(View view, ViewGroup.LayoutParams params) {
-		getDelegate().setContentView(view, params);
 	}
 
 	@Override
@@ -201,13 +179,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			mDelegate = AppCompatDelegate.create(this, null);
 		}
 		return mDelegate;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_settings, menu);
-		return true;
 	}
 
 	@Override
