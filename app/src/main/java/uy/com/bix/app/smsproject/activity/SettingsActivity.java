@@ -261,17 +261,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 
 	public void saveSettings() {
-
-		// We save the user preferences using the default shared preferences
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putInt("Year", expirationYear);
-		editor.putInt("Month", expirationMonth + 1);
-		editor.putInt("Day", expirationDay);
-		editor.putInt("Hour", expirationHour);
-		editor.putInt("Minute", expirationMinute);
-		editor.apply();
-
 		DateTime sendingDate = DateTime.now();
 		sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
 		sendingDate = sendingDate.withHourOfDay(expirationHour);
@@ -279,22 +268,43 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		sendingDate = sendingDate.withMonthOfYear(expirationMonth + 1);
 		sendingDate = sendingDate.withDayOfMonth(expirationDay);
 
-		// The date must be in milliseconds
-		long whenToFireTask = sendingDate.getMillis();
+		if (sendingDate.isBeforeNow()) {
+			Toast.makeText(contextOfApplication,
+				"La fecha debe ser posterior al momento actual, guardado cancelado",
+				Toast.LENGTH_LONG).show();
+		}
+		else {
 
-		isActive = settings.getBoolean("Active", false);
-		if (isActive) {
-			scheduleAlarm(whenToFireTask);
-			System.out.println(sendingDate);
+			// We save the user preferences using the default shared preferences
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putInt("Year", expirationYear);
+			editor.putInt("Month", expirationMonth + 1);
+			editor.putInt("Day", expirationDay);
+			editor.putInt("Hour", expirationHour);
+			editor.putInt("Minute", expirationMinute);
+			editor.apply();
+
+			// The date must be in milliseconds
+			long whenToFireTask = sendingDate.getMillis();
+
+			isActive = settings.getBoolean("Active", false);
+			if (isActive) {
+				scheduleAlarm(whenToFireTask);
+				System.out.println(sendingDate);
+			}
+
+			Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 		}
 
-		Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		if (id == DATE_DIALOG_ID) {
-			return new DatePickerDialog(this, dPickerListener, expirationYear, expirationMonth, expirationDay);
+			DatePickerDialog datePickerDialog = new DatePickerDialog(this, dPickerListener, expirationYear, expirationMonth, expirationDay);
+			datePickerDialog.getDatePicker().setMinDate(DateTime.now().getMillis() - 1000);
+			return datePickerDialog;
 		}
 		else if (id == TIME_DIALOG_ID) {
 			return new TimePickerDialog(this, timePickerListener, expirationHour, expirationMinute, false);
