@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,24 +28,30 @@ public class AlertReceiver extends BroadcastReceiver {
 					alarmController.loadPreferencesAndSendMessages(context);
 					break;
 				case Activity.RESULT_OK:
-					Toast.makeText(context, "SMS sent", Toast.LENGTH_SHORT).show();
 					break;
 				case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-					Toast.makeText(context, "Generic failure", Toast.LENGTH_SHORT).show();
+					alertErrorWhileSendingSms(context);
 					break;
 				case SmsManager.RESULT_ERROR_NO_SERVICE:
-					Toast.makeText(context, "No service", Toast.LENGTH_SHORT).show();
+					alertErrorWhileSendingSms(context);
 					break;
 				case SmsManager.RESULT_ERROR_NULL_PDU:
-					Toast.makeText(context, "Null PDU", Toast.LENGTH_SHORT).show();
+					alertErrorWhileSendingSms(context);
 					break;
 				case SmsManager.RESULT_ERROR_RADIO_OFF:
-					Toast.makeText(context, "Radio off", Toast.LENGTH_SHORT).show();
+					alertErrorWhileSendingSms(context);
 					break;
 			}
 		} catch (Exception e) {
 			Log.d("Exception: ", e.getMessage());
 		}
+	}
+
+	private void alertErrorWhileSendingSms (Context context) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("Error", true);
+		Toast.makeText(context, "Stop for error!!!", Toast.LENGTH_SHORT).show();
 	}
 }
 

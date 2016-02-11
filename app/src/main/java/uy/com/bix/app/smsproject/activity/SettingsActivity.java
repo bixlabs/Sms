@@ -226,7 +226,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				String.valueOf(expirationYear));
 		}
 		else if (key.equals(TIME_KEY)) {
-			p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
+			if (expirationMinute < 10) {
+				p.setSummary(String.valueOf(expirationHour) + ":" + "0" + String.valueOf(expirationMinute));
+			}
+			else {
+				p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
+			}
+
 		}
 
 	}
