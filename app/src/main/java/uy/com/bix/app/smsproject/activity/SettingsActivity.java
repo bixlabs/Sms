@@ -287,9 +287,17 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		System.out.println(key);
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get(key)[0]);
-		editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get(key)[1]);
-		editor.apply();
+		if (key != "0") {
+			editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get(key)[0]);
+			editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get(key)[1]);
+			editor.apply();
+		}
+		else {
+			editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get("ASH")[0]);
+			editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get("ASH")[1]);
+			editor.apply();
+		}
+
 	};
 
 	public void saveSettings() {
@@ -299,6 +307,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		sendingDate = sendingDate.withYear(expirationYear);
 		sendingDate = sendingDate.withMonthOfYear(expirationMonth + 1);
 		sendingDate = sendingDate.withDayOfMonth(expirationDay);
+		sendingDate = sendingDate.withSecondOfMinute(10);
 
 		if (sendingDate.isBeforeNow()) {
 			Toast.makeText(contextOfApplication,
@@ -348,13 +357,27 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		= new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int month, int day) {
-				expirationYear = year;
-				expirationMonth = month;
-				expirationDay = day;
+				DateTime dt = DateTime.now();
+				DateTime selectedDate = dt.withYear(year);
+				selectedDate = selectedDate.withMonthOfYear(month + 1);
+				selectedDate = selectedDate.withDayOfMonth(day);
+				if (selectedDate.isBeforeNow()) {
+					Toast.makeText(contextOfApplication,
+						"Por favor elige una fecha posterior a hoy",
+						Toast.LENGTH_LONG).show();
+					expirationYear = dt.getYear();
+					expirationMonth = dt.getMonthOfYear() - 1;
+					expirationDay = dt.getDayOfMonth();
+				}
+				else {
+					expirationYear = year;
+					expirationMonth = month;
+					expirationDay = day;
+				}
 				isLastDay = false;
 
 				// If the day selected is the last we update the boolean isLastDay
-				DateTime dt = DateTime.now();
+				dt = DateTime.now();
 				dt = dt.withMonthOfYear(expirationMonth + 1);
 				dt = dt.dayOfMonth().withMaximumValue();
 				int last = dt.getDayOfMonth();

@@ -12,7 +12,7 @@
     android:summary="Organizacion que recibira la donacion"
     android:entries="@array/organizations"
     android:entryValues="@array/organization_values"
-    android:defaultValue="0">
+    android:defaultValue="ASH">
   </ListPreference>
 
   <EditTextPreference
