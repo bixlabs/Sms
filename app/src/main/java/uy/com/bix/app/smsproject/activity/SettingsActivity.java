@@ -239,6 +239,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				ListPreference lp = (ListPreference) p;
 				if (lp.getValue().equals("Personalizada")) {
 					showMessageAndPhonePreferences();
+					Toast.makeText(contextOfApplication, "Por favor, ingresa número y mensaje para donar",
+						Toast.LENGTH_SHORT).show();
 				}
 				else {
 					hideMessageAndPhonePreferences();
@@ -288,8 +290,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get(key)[0]);
 		editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get(key)[1]);
 		editor.apply();
-		System.out.println(ORGANIZATION_INFO.get(key)[0]);
-		System.out.println(ORGANIZATION_INFO.get(key)[1]);
 	};
 
 	public void saveSettings() {
