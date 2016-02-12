@@ -12,10 +12,12 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.annotation.LayoutRes;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
@@ -27,6 +29,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
+import static uy.com.bix.app.smsproject.classes.Constants.ORGANIZATION_INFO;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 
@@ -40,8 +43,10 @@ import uy.com.bix.app.smsproject.classes.AlertReceiver;
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
 	int expirationYear, expirationMonth, expirationDay, expirationHour, expirationMinute;
+	String selectedOrganization;
 	boolean isLastDay, isActive;
 	private AppCompatDelegate mDelegate;
+	Preference messagePreference, phonePreference;
 
 	static final int DATE_DIALOG_ID = 0;
 	static final int TIME_DIALOG_ID = 1111;
@@ -50,6 +55,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	static final String MAX_KEY = "Max";
 	static final String DATE_KEY = "btnDateFilter";
 	static final String TIME_KEY = "btnTimeFilter";
+	static final String ORGANIZATION_KEY = "Organization";
 	public static Context contextOfApplication;
 
 	@Override
@@ -80,19 +86,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			}
 		});
 
+		// We must hide the number and message preferences
+		messagePreference = findPreference(MESSAGE_KEY);
+		phonePreference = findPreference(NUMBER_KEY);
+		hideMessageAndPhonePreferences();
+
 		JodaTimeAndroid.init(this);
-		DateTime today = DateTime.now();
-
-		// Get saved user settings
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-
-		// The month in the date picker is in 0-11 range
-		expirationMonth = settings.getInt("Month", today.getMonthOfYear()) - 1;
-		expirationDay = settings.getInt("Day", today.getDayOfMonth());
-		expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
-		expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
-		isLastDay = settings.getBoolean("LastDay", false);
-		expirationYear = settings.getInt("Year", today.getYear());
+		getPreferencesFromUser();
 
 		initSummary(getPreferenceScreen());
 	}
@@ -200,42 +200,97 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 
 	private void updatePrefSummary(Preference p) {
-		String key = p.getKey();
-		if (p instanceof EditTextPreference) {
-			EditTextPreference editTextPref = (EditTextPreference) p;
-			if (editTextPref.getText() == null || editTextPref.getText().equals("")) {
-				switch(p.getKey()) {
-					case MESSAGE_KEY:
-						p.setSummary("Mensaje a enviar");
-						break;
-					case MAX_KEY:
-						p.setSummary("Tope maximo de mensajes a enviar");
-						break;
-					case NUMBER_KEY:
-						p.setSummary("Numero destinatario de la donacion");
-						break;
+		if (p != null) {
+			String key = p.getKey();
+			if (p instanceof EditTextPreference) {
+				EditTextPreference editTextPref = (EditTextPreference) p;
+				if (editTextPref.getText() == null || editTextPref.getText().equals("")) {
+					switch(p.getKey()) {
+						case MESSAGE_KEY:
+							p.setSummary("Mensaje a enviar");
+							break;
+						case MAX_KEY:
+							p.setSummary("Tope maximo de mensajes a enviar");
+							break;
+						case NUMBER_KEY:
+							p.setSummary("Numero destinatario de la donacion");
+							break;
+					}
+				}
+				else {
+					p.setSummary(editTextPref.getText());
 				}
 			}
-			else {
-				p.setSummary(editTextPref.getText());
+			else if (key.equals(DATE_KEY)) {
+				p.setSummary(String.valueOf(expirationDay) + "/" +
+					String.valueOf(expirationMonth + 1) + "/" +
+					String.valueOf(expirationYear));
 			}
-		}
-		else if (key.equals(DATE_KEY)) {
-			p.setSummary(String.valueOf(expirationDay) + "/" +
-				String.valueOf(expirationMonth + 1) + "/" +
-				String.valueOf(expirationYear));
-		}
-		else if (key.equals(TIME_KEY)) {
-			if (expirationMinute < 10) {
-				p.setSummary(String.valueOf(expirationHour) + ":" + "0" + String.valueOf(expirationMinute));
-			}
-			else {
-				p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
-			}
+			else if (key.equals(TIME_KEY)) {
+				if (expirationMinute < 10) {
+					p.setSummary(String.valueOf(expirationHour) + ":" + "0" + String.valueOf(expirationMinute));
+				}
+				else {
+					p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
+				}
 
+			}
+			else if (key.equals(ORGANIZATION_KEY)) {
+				ListPreference lp = (ListPreference) p;
+				if (lp.getValue().equals("Personalizada")) {
+					showMessageAndPhonePreferences();
+				}
+				else {
+					hideMessageAndPhonePreferences();
+					updateMessageAndPhoneData(lp.getValue());
+				}
+				p.setSummary(lp.getEntry());
+			}
 		}
-
 	}
+
+	private void hideMessageAndPhonePreferences() {
+		if (findPreference("Phone") != null && findPreference("Message") != null) {
+			PreferenceScreen screen = this.getPreferenceScreen();
+			screen.removePreference(messagePreference);
+			screen.removePreference(phonePreference);
+		}
+	}
+
+	private void showMessageAndPhonePreferences() {
+		PreferenceScreen screen = this.getPreferenceScreen();
+		screen.addPreference(messagePreference);
+		updatePrefSummary(messagePreference);
+		screen.addPreference(phonePreference);
+		updatePrefSummary(phonePreference);
+	}
+
+	private void getPreferencesFromUser() {
+		DateTime today = DateTime.now();
+
+		// Get saved user settings
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+
+		// The month in the date picker is in 0-11 range
+		expirationMonth = settings.getInt("Month", today.getMonthOfYear()) - 1;
+		expirationDay = settings.getInt("Day", today.getDayOfMonth());
+		expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
+		expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
+		isLastDay = settings.getBoolean("LastDay", false);
+		expirationYear = settings.getInt("Year", today.getYear());
+		selectedOrganization = settings.getString(ORGANIZATION_KEY, "ASH");
+	}
+
+	private void updateMessageAndPhoneData(String key) {
+		System.out.println(key);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get(key)[0]);
+		editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get(key)[1]);
+		editor.apply();
+		System.out.println(ORGANIZATION_INFO.get(key)[0]);
+		System.out.println(ORGANIZATION_INFO.get(key)[1]);
+	};
 
 	public void saveSettings() {
 		DateTime sendingDate = DateTime.now();
