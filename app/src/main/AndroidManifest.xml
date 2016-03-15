@@ -1,28 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uy.com.bix.app.smsproject">
+    package="uy.com.bix.app.smsproject" >
 
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
-        <service
-            android:name=".service.SmsIntentService"
-            android:exported="false" />
-
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/app_name">
+            android:name=".activity.SplashScreenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashScreenTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <receiver android:name=".classes.SmsReceiver" >
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait" >
+        </activity>
+        <receiver android:name=".classes.AlertReceiver">
+            <intent-filter>
+                <action android:name="SMS_SENT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

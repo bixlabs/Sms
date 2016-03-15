@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="organizations">
+    <item>Animales sin hogar</item>
+    <item>Fundacion Alvarez Caldeiro Barcia</item>
+    <item>Unicef</item>
+    <item>Orquestas Juveniles</item>
+    <item>Peluffo Giguens</item>
+    <item>Aldeas Infantiles</item>
+    <item>Personalizada</item>
+  </string-array>
+  <string-array name="organization_values">
+    <item>ASH</item>
+    <item>FACB</item>
+    <item>UNCF</item>
+    <item>OJ</item>
+    <item>PG</item>
+    <item>AI</item>
+    <item>Personalizada</item>
+  </string-array>
+
+</resources>
