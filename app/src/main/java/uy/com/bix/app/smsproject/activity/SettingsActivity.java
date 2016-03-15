@@ -12,17 +12,15 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +29,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
+import static uy.com.bix.app.smsproject.classes.Constants.ORGANIZATION_INFO;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 
@@ -44,8 +43,10 @@ import uy.com.bix.app.smsproject.classes.AlertReceiver;
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
 	int expirationYear, expirationMonth, expirationDay, expirationHour, expirationMinute;
+	String selectedOrganization;
 	boolean isLastDay, isActive;
 	private AppCompatDelegate mDelegate;
+	Preference messagePreference, phonePreference;
 
 	static final int DATE_DIALOG_ID = 0;
 	static final int TIME_DIALOG_ID = 1111;
@@ -54,6 +55,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	static final String MAX_KEY = "Max";
 	static final String DATE_KEY = "btnDateFilter";
 	static final String TIME_KEY = "btnTimeFilter";
+	static final String ORGANIZATION_KEY = "Organization";
 	public static Context contextOfApplication;
 
 	@Override
@@ -84,19 +86,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			}
 		});
 
+		// We must hide the number and message preferences
+		messagePreference = findPreference(MESSAGE_KEY);
+		phonePreference = findPreference(NUMBER_KEY);
+		hideMessageAndPhonePreferences();
+
 		JodaTimeAndroid.init(this);
-		DateTime today = DateTime.now();
-
-		// Get saved user settings
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-
-		// The month in the date picker is in 0-11 range
-		expirationMonth = settings.getInt("Month", today.getMonthOfYear()) - 1;
-		expirationDay = settings.getInt("Day", today.getDayOfMonth());
-		expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
-		expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
-		isLastDay = settings.getBoolean("LastDay", false);
-		expirationYear = settings.getInt("Year", today.getYear());
+		getPreferencesFromUser();
 
 		initSummary(getPreferenceScreen());
 	}
@@ -107,14 +103,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		getDelegate().onPostCreate(savedInstanceState);
 	}
 
-	public ActionBar getSupportActionBar() {
-		return getDelegate().getSupportActionBar();
-	}
-
-	public void setSupportActionBar(@Nullable Toolbar toolbar) {
-		getDelegate().setSupportActionBar(toolbar);
-	}
-
 	@Override
 	public MenuInflater getMenuInflater() {
 		return getDelegate().getMenuInflater();
@@ -123,16 +111,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	public void setContentView(@LayoutRes int layoutResID) {
 		getDelegate().setContentView(layoutResID);
-	}
-
-	@Override
-	public void setContentView(View view) {
-		getDelegate().setContentView(view);
-	}
-
-	@Override
-	public void setContentView(View view, ViewGroup.LayoutParams params) {
-		getDelegate().setContentView(view, params);
 	}
 
 	@Override
@@ -204,13 +182,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_settings, menu);
-		return true;
-	}
-
-	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 																				String key) {
 		updatePrefSummary(findPreference(key));
@@ -229,72 +200,152 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 
 	private void updatePrefSummary(Preference p) {
-		String key = p.getKey();
-		if (p instanceof EditTextPreference) {
-			EditTextPreference editTextPref = (EditTextPreference) p;
-			if (editTextPref.getText() == null || editTextPref.getText().equals("")) {
-				switch(p.getKey()) {
-					case MESSAGE_KEY:
-						p.setSummary("Mensaje a enviar");
-						break;
-					case MAX_KEY:
-						p.setSummary("Tope maximo de mensajes a enviar");
-						break;
-					case NUMBER_KEY:
-						p.setSummary("Numero destinatario de la donacion");
-						break;
+		if (p != null) {
+			String key = p.getKey();
+			if (p instanceof EditTextPreference) {
+				EditTextPreference editTextPref = (EditTextPreference) p;
+				if (editTextPref.getText() == null || editTextPref.getText().equals("")) {
+					switch(p.getKey()) {
+						case MESSAGE_KEY:
+							p.setSummary("Mensaje a enviar");
+							break;
+						case MAX_KEY:
+							p.setSummary("Tope maximo de mensajes a enviar");
+							break;
+						case NUMBER_KEY:
+							p.setSummary("Numero destinatario de la donacion");
+							break;
+					}
+				}
+				else {
+					p.setSummary(editTextPref.getText());
 				}
 			}
-			else {
-				p.setSummary(editTextPref.getText());
+			else if (key.equals(DATE_KEY)) {
+				p.setSummary(String.valueOf(expirationDay) + "/" +
+					String.valueOf(expirationMonth + 1) + "/" +
+					String.valueOf(expirationYear));
+			}
+			else if (key.equals(TIME_KEY)) {
+				if (expirationMinute < 10) {
+					p.setSummary(String.valueOf(expirationHour) + ":" + "0" + String.valueOf(expirationMinute));
+				}
+				else {
+					p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
+				}
+
+			}
+			else if (key.equals(ORGANIZATION_KEY)) {
+				ListPreference lp = (ListPreference) p;
+				if (lp.getValue().equals("Personalizada")) {
+					showMessageAndPhonePreferences();
+					Toast.makeText(contextOfApplication, "Por favor, ingresa número y mensaje para donar",
+						Toast.LENGTH_SHORT).show();
+				}
+				else {
+					hideMessageAndPhonePreferences();
+					updateMessageAndPhoneData(lp.getValue());
+				}
+				p.setSummary(lp.getEntry());
 			}
 		}
-		else if (key.equals(DATE_KEY)) {
-			p.setSummary(String.valueOf(expirationDay) + "/" +
-				String.valueOf(expirationMonth + 1) + "/" +
-				String.valueOf(expirationYear));
-		}
-		else if (key.equals(TIME_KEY)) {
-			p.setSummary(String.valueOf(expirationHour) + ":" + String.valueOf(expirationMinute));
-		}
-
 	}
 
-	public void saveSettings() {
+	private void hideMessageAndPhonePreferences() {
+		if (findPreference("Phone") != null && findPreference("Message") != null) {
+			PreferenceScreen screen = this.getPreferenceScreen();
+			screen.removePreference(messagePreference);
+			screen.removePreference(phonePreference);
+		}
+	}
 
-		// We save the user preferences using the default shared preferences
+	private void showMessageAndPhonePreferences() {
+		PreferenceScreen screen = this.getPreferenceScreen();
+		screen.addPreference(messagePreference);
+		updatePrefSummary(messagePreference);
+		screen.addPreference(phonePreference);
+		updatePrefSummary(phonePreference);
+	}
+
+	private void getPreferencesFromUser() {
+		DateTime today = DateTime.now();
+
+		// Get saved user settings
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+
+		// The month in the date picker is in 0-11 range
+		expirationMonth = settings.getInt("Month", today.getMonthOfYear()) - 1;
+		expirationDay = settings.getInt("Day", today.getDayOfMonth());
+		expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
+		expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
+		isLastDay = settings.getBoolean("LastDay", false);
+		expirationYear = settings.getInt("Year", today.getYear());
+		selectedOrganization = settings.getString(ORGANIZATION_KEY, "ASH");
+	}
+
+	private void updateMessageAndPhoneData(String key) {
+		System.out.println(key);
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putInt("Year", expirationYear);
-		editor.putInt("Month", expirationMonth + 1);
-		editor.putInt("Day", expirationDay);
-		editor.putInt("Hour", expirationHour);
-		editor.putInt("Minute", expirationMinute);
-		editor.apply();
+		if (key != "0") {
+			editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get(key)[0]);
+			editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get(key)[1]);
+			editor.apply();
+		}
+		else {
+			editor.putString(MESSAGE_KEY, ORGANIZATION_INFO.get("ASH")[0]);
+			editor.putString(NUMBER_KEY, ORGANIZATION_INFO.get("ASH")[1]);
+			editor.apply();
+		}
 
+	};
+
+	public void saveSettings() {
 		DateTime sendingDate = DateTime.now();
 		sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
 		sendingDate = sendingDate.withHourOfDay(expirationHour);
 		sendingDate = sendingDate.withYear(expirationYear);
 		sendingDate = sendingDate.withMonthOfYear(expirationMonth + 1);
 		sendingDate = sendingDate.withDayOfMonth(expirationDay);
+		sendingDate = sendingDate.withSecondOfMinute(10);
 
-		// The date must be in milliseconds
-		long whenToFireTask = sendingDate.getMillis();
+		if (sendingDate.isBeforeNow()) {
+			Toast.makeText(contextOfApplication,
+				"La fecha debe ser posterior al momento actual, guardado cancelado",
+				Toast.LENGTH_LONG).show();
+		}
+		else {
 
-		isActive = settings.getBoolean("Active", false);
-		if (isActive) {
-			scheduleAlarm(whenToFireTask);
-			System.out.println(sendingDate);
+			// We save the user preferences using the default shared preferences
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putInt("Year", expirationYear);
+			editor.putInt("Month", expirationMonth + 1);
+			editor.putInt("Day", expirationDay);
+			editor.putInt("Hour", expirationHour);
+			editor.putInt("Minute", expirationMinute);
+			editor.apply();
+
+			// The date must be in milliseconds
+			long whenToFireTask = sendingDate.getMillis();
+
+			isActive = settings.getBoolean("Active", false);
+			if (isActive) {
+				scheduleAlarm(whenToFireTask);
+				System.out.println(sendingDate);
+			}
+
+			Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 		}
 
-		Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		if (id == DATE_DIALOG_ID) {
-			return new DatePickerDialog(this, dPickerListener, expirationYear, expirationMonth, expirationDay);
+			DatePickerDialog datePickerDialog = new DatePickerDialog(this, dPickerListener, expirationYear, expirationMonth, expirationDay);
+			datePickerDialog.getDatePicker().setMinDate(DateTime.now().getMillis() - 1000);
+			return datePickerDialog;
 		}
 		else if (id == TIME_DIALOG_ID) {
 			return new TimePickerDialog(this, timePickerListener, expirationHour, expirationMinute, false);
@@ -306,13 +357,27 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		= new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int month, int day) {
-				expirationYear = year;
-				expirationMonth = month;
-				expirationDay = day;
+				DateTime dt = DateTime.now();
+				DateTime selectedDate = dt.withYear(year);
+				selectedDate = selectedDate.withMonthOfYear(month + 1);
+				selectedDate = selectedDate.withDayOfMonth(day);
+				if (selectedDate.isBeforeNow()) {
+					Toast.makeText(contextOfApplication,
+						"Por favor elige una fecha posterior a hoy",
+						Toast.LENGTH_LONG).show();
+					expirationYear = dt.getYear();
+					expirationMonth = dt.getMonthOfYear() - 1;
+					expirationDay = dt.getDayOfMonth();
+				}
+				else {
+					expirationYear = year;
+					expirationMonth = month;
+					expirationDay = day;
+				}
 				isLastDay = false;
 
 				// If the day selected is the last we update the boolean isLastDay
-				DateTime dt = DateTime.now();
+				dt = DateTime.now();
 				dt = dt.withMonthOfYear(expirationMonth + 1);
 				dt = dt.dayOfMonth().withMaximumValue();
 				int last = dt.getDayOfMonth();

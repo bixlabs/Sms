@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import uy.com.bix.app.smsproject.classes.AlertReceiver;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MAX;
 
 public class AlarmController extends AppCompatActivity {
 
@@ -115,7 +116,7 @@ public class AlarmController extends AppCompatActivity {
 			isLastDay = settings.getBoolean("LastDay", false);
 			phoneNumber = settings.getString("Phone", "1");
 			textMessage = settings.getString("Message", "Hello");
-			maxMessages = Integer.parseInt(settings.getString("Max", "1"));
+			maxMessages = Integer.parseInt(settings.getString("Max", DEFAULT_MAX));
 
 			configureNextMonthAlarm(actualExpirationDate, context);
 
@@ -139,7 +140,14 @@ public class AlarmController extends AppCompatActivity {
 		DateTime actualTime = DateTime.now();
 		boolean stopForChangeOfDay = actualTime.getDayOfMonth() != expirationDate.getDayOfMonth();
 
-		while (!stopForMax && !stopForChangeOfDay) {
+		// We also have to check if an error happens while sending
+		boolean stopForErrorWhileSending = false;
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean("Error", stopForErrorWhileSending);
+		editor.apply();
+
+		while (!stopForMax && !stopForChangeOfDay && !stopForErrorWhileSending) {
 			msgController.sendMessage(phoneNum, text, context);
 
 			// We update the stopping criteria
@@ -147,6 +155,7 @@ public class AlarmController extends AppCompatActivity {
 			stopForMax = maxMessagesToSend == 0;
 			actualTime = DateTime.now();
 			stopForChangeOfDay = actualTime.getDayOfMonth() != expirationDate.getDayOfMonth();
+			stopForErrorWhileSending = settings.getBoolean("Error", false);
 		}
 	}
 }
