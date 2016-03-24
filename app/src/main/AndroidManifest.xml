@@ -12,8 +12,8 @@
     <application android:name=".SmsAnalyticsApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:label="Sms Solidario"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activity.SplashScreenActivity"
             android:screenOrientation="portrait"
@@ -26,8 +26,8 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/MainTheme">
         </activity>
 
         <receiver android:name=".classes.SmsReceiver" >

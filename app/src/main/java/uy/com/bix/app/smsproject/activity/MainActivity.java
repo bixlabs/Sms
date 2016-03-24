@@ -1,11 +1,16 @@
 package uy.com.bix.app.smsproject.activity;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -24,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 
 		Log.d("Main Activity", "This is my message");
+
+		/*
+		final ActionBar actionBar = getActionBar();
+		View view = getLayoutInflater().inflate(R.layout.actionbar_home, null);
+		getSupportActionBar().setDisplayShowCustomEnabled(true);
+		getSupportActionBar().setCustomView(view);
+		*/
+
 		// Obtain the shared Tracker instance.
 		SmsAnalyticsApplication application = (SmsAnalyticsApplication) getApplication();
 		Tracker tracker = application.getDefaultTracker();
