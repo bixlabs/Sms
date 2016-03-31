@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Log.d("Main Activity", "This is my message");
 		// Obtain the shared Tracker instance.
 		SmsAnalyticsApplication application = (SmsAnalyticsApplication) getApplication();
 		Tracker tracker = application.getDefaultTracker();

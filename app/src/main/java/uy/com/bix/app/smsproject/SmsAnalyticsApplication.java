@@ -1,8 +1,5 @@
 package uy.com.bix.app.smsproject;
 
-/**
- * Created by marcosmorales on 3/24/16.
- */
 import android.app.Application;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
