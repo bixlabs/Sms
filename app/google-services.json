@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_id": "sms-solidario-ac21d",
+    "project_number": "762097197514",
+    "name": "Sms Solidario"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762097197514:android:847e69c43149f1a9",
+        "client_id": "android:uy.com.bix.app.smsproject",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "uy.com.bix.app.smsproject",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75141054-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

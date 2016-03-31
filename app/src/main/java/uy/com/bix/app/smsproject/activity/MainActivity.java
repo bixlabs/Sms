@@ -3,9 +3,17 @@ package uy.com.bix.app.smsproject.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.analytics.ecommerce.Product;
+import com.google.android.gms.analytics.ecommerce.ProductAction;
+
 import uy.com.bix.app.smsproject.R;
+import uy.com.bix.app.smsproject.SmsAnalyticsApplication;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -14,6 +22,28 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// Obtain the shared Tracker instance.
+		SmsAnalyticsApplication application = (SmsAnalyticsApplication) getApplication();
+		Tracker tracker = application.getDefaultTracker();
+
+		Product product = new Product()
+				.setName("Sms")
+				.setPrice(40.00);
+
+		ProductAction productAction = new ProductAction(ProductAction.ACTION_PURCHASE)
+				.setTransactionId("TestingTransactionId");
+
+		// Add the transaction data to the event.
+		HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder()
+				.setCategory("Donation")
+				.setAction("Purchase")
+				.addProduct(product)
+				.setProductAction(productAction);
+
+		// Send the transaction data with the event.
+		tracker.send(builder.build());
+
 	}
 
 
