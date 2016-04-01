@@ -27,7 +27,8 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MainTheme">
+            android:theme="@style/AppTheme"
+            android:label="">
         </activity>
 
         <receiver android:name=".classes.SmsReceiver" >

@@ -5,13 +5,14 @@
     android:gravity="center"
     android:orientation="horizontal" >
 
+
     <ImageView
-        android:id="@+id/actionBarLogo"
-        android:layout_width="82dp"
-        android:layout_height="17dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:longClickable="false"
-        android:src="@drawable/menu_logo" />
+      android:id="@+id/actionBarLogo"
+      android:layout_width="wrap_content"
+      android:layout_height="34dp"
+      android:clickable="false"
+      android:focusable="false"
+      android:longClickable="false"
+      android:src="@drawable/menu_logo"/>
 
 </LinearLayout>

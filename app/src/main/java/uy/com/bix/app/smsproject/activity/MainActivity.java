@@ -30,12 +30,12 @@ public class MainActivity extends AppCompatActivity {
 
 		Log.d("Main Activity", "This is my message");
 
-		/*
+
 		final ActionBar actionBar = getActionBar();
 		View view = getLayoutInflater().inflate(R.layout.actionbar_home, null);
 		getSupportActionBar().setDisplayShowCustomEnabled(true);
 		getSupportActionBar().setCustomView(view);
-		*/
+
 
 		// Obtain the shared Tracker instance.
 		SmsAnalyticsApplication application = (SmsAnalyticsApplication) getApplication();
