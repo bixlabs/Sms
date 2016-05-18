@@ -1,8 +1,9 @@
 <resources>
-  <string name="app_name">Sms Solidario</string>
+  <string name="app_name">SMS Solidario</string>
 
   <string name="hello_world">Hello world!</string>
   <string name="action_settings">Configuración</string>
+  <string name="about">Información</string>
   <string name="btn_send_message">Send message</string>
   <string name="btn_cancel">Cancelar</string>
   <string name="btn_save">Guardar</string>
@@ -22,4 +23,22 @@
   </string-array>
   <string name="title_activity_splash_screen">SplashScreenActivity</string>
   <string name="title_activity_receiver">ReceiverActivity</string>
+  <string name="activity_main_gratitude">Una acción puede generar\nmuchas reacciones.\nTu aporte logrará un gran impacto :)\nGracias por ser parte.</string>
+  <string name="activity_main_already_programmed">¡Está programada la primera\ndonación!\nGracias por ser parte.</string>
+  <string name="activity_main_your_impact">Tu impacto hasta hoy:</string>
+  <string name="activity_main_lets_begin">¡Comencemos!</string>
+  <string name="activity_main_sms">SMS</string>
+  <string name="activity_main_donated">donados.</string>
+  <string name ="activity_main_app_status_active">Aplicación activa</string>
+  <string name ="activity_main_app_status_inactive">Aplicación inactiva</string>
+  <string name="activity_main_configure_schedule_text">Programar</string>
+  <string name="activity_main_edit_donation">Editar donación</string>
+  <string name="settings_activity_title">Programar donación</string>
+  <string name="action_done">Hecho</string>
+  <string name="description_image_solidario">Solidaridad</string>
+  <string name="about_interest">Es de gran interés para nosotros saber en qué cosas podemos mejorar esta app, queremos escuchar tus recomendaciones!\n\nEscribinos a: sms@bixlabs.com</string>
+  <string name="about_developed_by">Aplicación desarrollada y diseñada por:</string>
+  <string name="about_bixlabs_web">www.bixlabs.com</string>
+  <string name="about_bixlabs_copyright">©2016 BixLabs</string>
+  <string name="toaster_sending_sms">Se va a donar dinero de tu saldo, muchas gracias! :)</string>
 </resources>

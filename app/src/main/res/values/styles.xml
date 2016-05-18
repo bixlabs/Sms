@@ -1,10 +1,11 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <!-- Customize your theme here. -->
     <item name="actionBarStyle">@style/AppActionBar</item>
     <item name="actionBarTheme">@style/AppThemeOverlay</item>
+    <item name="colorPrimary">@color/grapeFruit</item>
   </style>
 
   <style name="AppActionBar" parent="Base.Widget.AppCompat.ActionBar.Solid">
@@ -44,6 +45,22 @@
   <!-- Splash Screen application theme. -->
   <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="colorPrimaryDark">@color/black</item>
+  </style>
+
+  <!-- Style for the program button in the main activity -->
+  <style name="ScheduleButton" parent="@android:style/Widget.Button">
+    <item name="colorButtonNormal">@color/programButton</item>
+    <item name="android:textAllCaps">false</item>
+  </style>
+
+  <style name="ActionBarSettings" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <item name="titleTextColor">@color/black</item>
+    <item name="android:textColorPrimary">@color/grapeFruit</item>
+    <item name="android:windowActionBar">false</item>
+  </style>
+
+  <style name="PreferenceList" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:textColorPrimary">@color/grapeFruit</item>
   </style>
 
 </resources>

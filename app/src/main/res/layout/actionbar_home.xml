@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="horizontal" >
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:gravity="center"
+  android:orientation="horizontal">
 
-
-    <ImageView
-      android:id="@+id/actionBarLogo"
-      android:layout_width="wrap_content"
-      android:layout_height="34dp"
-      android:clickable="false"
-      android:focusable="false"
-      android:longClickable="false"
-      android:src="@drawable/menu_logo"/>
+<ImageView
+  android:id="@+id/actionBarLogo"
+  android:layout_width="123dp"
+  android:layout_height="34dp"
+  android:clickable="false"
+  android:focusable="false"
+  android:longClickable="false"
+  android:src="@drawable/menu_logo_sms" />
 
 </LinearLayout>

@@ -1,56 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <SwitchPreference
-    android:key="Active"
-    android:title="Activar aplicación" >
-
-  </SwitchPreference>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <ListPreference
     android:key="Organization"
-    android:title="Selecciona una organizacion"
-    android:summary="Organizacion que recibira la donacion"
+    android:title="Selecciona una ONG"
+    android:summary="Organización que recibirá la donación"
     android:entries="@array/organizations"
     android:entryValues="@array/organization_values"
-    android:defaultValue="ASH">
-  </ListPreference>
+    android:defaultValue="ASH" />
 
   <EditTextPreference
     android:key="Phone"
-    android:title="Número"
-    android:dialogTitle="Ingrese un número"
-    android:inputType="phone">
-
-  </EditTextPreference>
+    android:title="Ingresa un número de teléfono"
+    android:dialogTitle="Nuevo número"
+    android:inputType="phone" />
 
   <EditTextPreference
     android:key="Message"
     android:title="Mensaje"
     android:dialogTitle="Ingrese texto"
-    android:inputType="text">
+    android:inputType="text" />
 
-  </EditTextPreference>
-
-  <EditTextPreference
+  <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
+    android:defaultValue="@integer/minSms"
     android:key="Max"
-    android:title="Máxima cantidad de mensajes"
-    android:dialogTitle="Ingrese un número"
-    android:inputType="number">
-
-  </EditTextPreference>
+    android:title="Cantidad máxima de SMS"
+    app:vnt_maxValue="@integer/maxSms"
+    app:vnt_minValue="@integer/minSms"
+    app:vnt_setWrapSelectorWheel="true"/>
 
   <Preference
     android:key="btnDateFilter"
     android:title="Seleccionar fecha" />
 
   <Preference
-  android:key="btnTimeFilter"
-  android:title="Hora de ejecucion" />
+    android:key="btnTimeFilter"
+    android:title="Hora de envío" />
 
   <CheckBoxPreference
     android:key="Notify"
-    android:title="Notificar antes de enviar mensajes">
-
-  </CheckBoxPreference>
+    android:title="Notificar al enviar"
+    android:widgetLayout="@layout/switch_preference" />
 
 </PreferenceScreen>

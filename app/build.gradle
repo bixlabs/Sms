@@ -1,28 +1,64 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+println System.getenv("STOREPASSWORD")
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "uy.com.bix.app.smsproject"
         minSdkVersion 14
-        targetSdkVersion 22
-        versionCode 1
+        targetSdkVersion 23
+        versionCode 8
         versionName "1.0"
     }
+
+    signingConfigs {
+        release {
+            storeFile file(STOREFILE)
+            storePassword STOREPASSWORD
+            keyAlias KEYALIAS
+            keyPassword KEYPASSWORD
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
 
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        // The Fabric Gradle plugin uses an open ended version to react
+        // quickly to Android tooling updates
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.awesomego.togglebutton:library:1.0.1'
+    compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'net.danlew:android.joda:2.9.1'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
+    compile 'com.vanniktech:vntnumberpickerpreference:1.0.0'
 }

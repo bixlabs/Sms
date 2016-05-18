@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:weightSum="1"
+  android:background="@color/white">
+
+  <TextView
+    android:id="@+id/text_your_impact"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/activity_main_your_impact"
+    android:textColor="@color/gratitudeMainText"
+    android:textSize="19sp"
+    android:gravity="center"
+    android:layout_marginTop="38dp" />
+
+  <TextView
+    android:id="@+id/text_sms_quantity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="0"
+    android:textColor="@color/grapeFruit"
+    android:textSize="70sp"
+    android:gravity="center"
+    android:layout_marginTop="38dp"
+    android:textStyle="bold" />
+
+  <TextView
+    android:id="@+id/text_sms"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/activity_main_sms"
+    android:textColor="@color/letsBeginText"
+    android:textSize="31sp"
+    android:gravity="center"
+    android:layout_marginTop="10dp"
+    android:textStyle="bold" />
+
+  <TextView
+    android:id="@+id/text_donated"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/activity_main_donated"
+    android:textColor="@color/gratitudeMainText"
+    android:textSize="25sp"
+    android:gravity="center"
+    android:layout_marginTop="10dp" />
+
+</LinearLayout>

@@ -15,10 +15,32 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 
+import uy.com.bix.app.smsproject.R;
 import uy.com.bix.app.smsproject.classes.AlertReceiver;
+
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_ACTIVE;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_ERROR;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_LAST_DAY;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MESSAGE;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MAX;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_NOTIFY;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_PHONE;
+import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_SENT_SMS;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_ACTIVE;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_DAY;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_ERROR;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_HOUR;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_LAST_DAY;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MAX;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MESSAGE;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MINUTE;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MONTH;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_NOTIFY;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_PHONE;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_SENT_SMS;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_YEAR;
 
 public class AlarmController extends AppCompatActivity {
 
@@ -67,9 +89,9 @@ public class AlarmController extends AppCompatActivity {
 		// We need to update the preferences of the user according to the month
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putInt("Year", nextExpirationDate.getYear());
-		editor.putInt("Month", nextExpirationDate.getMonthOfYear());
-		editor.putInt("Day", nextExpirationDate.getDayOfMonth());
+		editor.putInt(KEY_YEAR, nextExpirationDate.getYear());
+		editor.putInt(KEY_MONTH, nextExpirationDate.getMonthOfYear());
+		editor.putInt(KEY_DAY, nextExpirationDate.getDayOfMonth());
 		editor.apply();
 
 		// The date must be in milliseconds
@@ -91,7 +113,6 @@ public class AlarmController extends AppCompatActivity {
 		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfNextFiring, pendingIntent);
 	}
 
-
 	/**
 	 * This function is in charge of loading user preferences previously set.
 	 * The function only does this job if the app is active
@@ -100,29 +121,29 @@ public class AlarmController extends AppCompatActivity {
 	public void loadPreferencesAndSendMessages (Context context) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 		JodaTimeAndroid.init(context);
-		isActive = settings.getBoolean("Active", false);
+		isActive = settings.getBoolean(KEY_ACTIVE, DEFAULT_ACTIVE);
 
 		// We make sure the app is active to send messages
 		if (isActive) {
 			DateTime actualExpirationDate = DateTime.now();
 
 			// We get all the information the user set
-			notifyWhenSending = settings.getBoolean("Notify", false);
-			expirationYear = settings.getInt("Year", actualExpirationDate.getYear());
-			expirationMonth = settings.getInt("Month", actualExpirationDate.getMonthOfYear());
-			expirationDay = settings.getInt("Day", actualExpirationDate.getDayOfMonth());
-			expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
-			expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
-			isLastDay = settings.getBoolean("LastDay", false);
-			phoneNumber = settings.getString("Phone", "1");
-			textMessage = settings.getString("Message", "Hello");
-			maxMessages = Integer.parseInt(settings.getString("Max", DEFAULT_MAX));
+			notifyWhenSending = settings.getBoolean(KEY_NOTIFY, DEFAULT_NOTIFY);
+			expirationYear = settings.getInt(KEY_YEAR, actualExpirationDate.getYear());
+			expirationMonth = settings.getInt(KEY_MONTH, actualExpirationDate.getMonthOfYear());
+			expirationDay = settings.getInt(KEY_DAY, actualExpirationDate.getDayOfMonth());
+			expirationHour = settings.getInt(KEY_HOUR, DEFAULT_HOUR);
+			expirationMinute = settings.getInt(KEY_MINUTE, DEFAULT_MINUTES);
+			isLastDay = settings.getBoolean(KEY_LAST_DAY, DEFAULT_LAST_DAY);
+			phoneNumber = settings.getString(KEY_PHONE, DEFAULT_PHONE);
+			textMessage = settings.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
+			maxMessages = settings.getInt(KEY_MAX, DEFAULT_MAX);
 
 			configureNextMonthAlarm(actualExpirationDate, context);
 
 			// If the notification is activated, we must notify the user
 			if (notifyWhenSending) {
-				Toast.makeText(context, "Se va a donar dinero de tu saldo, muchas gracias! :)", 
+				Toast.makeText(context, context.getString(R.string.toaster_sending_sms),
 					Toast.LENGTH_LONG).show();
 			}
 
@@ -135,6 +156,7 @@ public class AlarmController extends AppCompatActivity {
 													 DateTime expirationDate, Context context) {
 		final MessageController msgController = MessageController.getInstance();
 		boolean stopForMax = maxMessagesToSend == 0;
+		int sentMessages = 0;
 
 		// If the day changes we stop sending messages to prevent spending wrong credit
 		DateTime actualTime = DateTime.now();
@@ -144,18 +166,25 @@ public class AlarmController extends AppCompatActivity {
 		boolean stopForErrorWhileSending = false;
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean("Error", stopForErrorWhileSending);
+		editor.putBoolean(KEY_ERROR, stopForErrorWhileSending);
 		editor.apply();
+
+		int totalMessages = settings.getInt(KEY_SENT_SMS, DEFAULT_SENT_SMS);
 
 		while (!stopForMax && !stopForChangeOfDay && !stopForErrorWhileSending) {
 			msgController.sendMessage(phoneNum, text, context);
 
 			// We update the stopping criteria
+			sentMessages++;
 			maxMessagesToSend--;
 			stopForMax = maxMessagesToSend == 0;
 			actualTime = DateTime.now();
 			stopForChangeOfDay = actualTime.getDayOfMonth() != expirationDate.getDayOfMonth();
-			stopForErrorWhileSending = settings.getBoolean("Error", false);
+			stopForErrorWhileSending = settings.getBoolean(KEY_ERROR, DEFAULT_ERROR);
 		}
+
+		editor.putInt(KEY_SENT_SMS, totalMessages + sentMessages);
+		editor.apply();
+
 	}
 }

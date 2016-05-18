@@ -14,6 +14,14 @@
     <item name="darkred" type="color">#FFCC0000</item>
     <item name="greyActionBar" type="color">#E8E8E8</item>
     <item name="blackActionBar" type="color">#636363</item>
+    <item name="gratitudeMainText" type="color">#5b5b5b</item>
+    <item name="letsBeginText" type="color">#0a4c7e</item>
+    <item name="programButton" type="color">#18d5cd</item>
+    <item name="grapeFruit" type="color">#ff6464</item>
+    <item name="toggleAppStatusActive" type="color">#64bd63</item>
+    <item name="toggleAppStatusInactive" type="color">#cccccc</item>
+    <item name="statusLayoutBackground" type="color">#eeeeee</item>
+    <item name="link_color" type="color">#123f92</item>
 
     <integer-array name="androidcolors">
         <item>@color/blue</item>
@@ -29,5 +37,4 @@
         <item>@color/greyActionBar</item>
         <item>@color/blackActionBar</item>
     </integer-array>
-
 </resources>
