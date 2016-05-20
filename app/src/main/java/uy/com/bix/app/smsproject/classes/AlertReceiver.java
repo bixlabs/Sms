@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import uy.com.bix.app.smsproject.controllers.AlarmController;
@@ -17,10 +16,6 @@ public class AlertReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-
-		Log.v("ALERTA ", "RECIBIDA");
-		Log.v("Codigo resultado ", String.valueOf(getResultCode()));
-
 		try {
 			switch (getResultCode()) {
 				case Activity.RESULT_CANCELED:
@@ -43,7 +38,7 @@ public class AlertReceiver extends BroadcastReceiver {
 					break;
 			}
 		} catch (Exception e) {
-			Log.d("Exception: ", e.getMessage());
+			Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
 		}
 	}
 

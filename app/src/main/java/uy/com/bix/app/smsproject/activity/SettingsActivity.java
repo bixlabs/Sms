@@ -27,7 +27,6 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_ACTIVE;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
 import static uy.com.bix.app.smsproject.classes.Constants.KEY_ACTIVE;

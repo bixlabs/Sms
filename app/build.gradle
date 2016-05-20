@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-println System.getenv("STOREPASSWORD")
 
 android {
     compileSdkVersion 23
@@ -10,8 +9,8 @@ android {
         applicationId "uy.com.bix.app.smsproject"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 8
-        versionName "1.0"
+        versionCode 10
+        versionName "1.10"
     }
 
     signingConfigs {

@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		Fabric.with(this, new Crashlytics());
 		setContentView(R.layout.activity_main);
-
-		Log.d("Main Activity", "This is my message");
 
 		// Set the toolbar and the custom view with the logo
 		final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app);

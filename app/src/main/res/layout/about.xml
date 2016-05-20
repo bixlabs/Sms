@@ -55,7 +55,8 @@
     android:textColor="@color/black"
     android:layout_marginTop="20dp"
     android:layout_gravity="center_horizontal"
-    android:textSize="13sp" />
+    android:textSize="13sp"
+    android:autoLink="email" />
 
   <TextView
     android:layout_width="wrap_content"
@@ -84,7 +85,8 @@
     android:textColor="@color/link_color"
     android:layout_marginTop="15dp"
     android:layout_gravity="center_horizontal"
-    android:textSize="18sp" />
+    android:textSize="18sp"
+    android:autoLink="web" />
 
   <TextView
     android:layout_width="wrap_content"
