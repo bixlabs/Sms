@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,7 @@ import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_CONFIGURED;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_SENT_SMS;
 import static uy.com.bix.app.smsproject.classes.Constants.KEY_ACTIVE;
 import static uy.com.bix.app.smsproject.classes.Constants.KEY_CONFIGURED;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MAX;
 import static uy.com.bix.app.smsproject.classes.Constants.KEY_SENT_SMS;
 
 
@@ -98,6 +100,21 @@ public class MainActivity extends AppCompatActivity {
 		contextOfApplication = getApplicationContext();
 		settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 
+		// Check number key as this was once a string
+		// and it needs to be an integer now or it will throw an exception
+		String maxKey = null;
+
+		try {
+			maxKey = settings.getString(KEY_MAX, "0");
+		} catch(ClassCastException e) {
+			Log.e("Conversion error", "Max key is not string");
+		}
+
+		if (maxKey != null) {
+			editor = settings.edit();
+			editor.remove(KEY_MAX);
+			editor.apply();
+		}
 
 		// Set the click listener for program schedule button
 		scheduleButton = (Button) findViewById(R.id.button_configure_schedule);
