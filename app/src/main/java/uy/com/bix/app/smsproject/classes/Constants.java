@@ -27,7 +27,7 @@ public final class Constants {
 	public static final String KEY_CONFIGURED = "Configured";
 	public static final int DEFAULT_HOUR = 23;
 	public static final int DEFAULT_MINUTES = 30;
-	public static final int DEFAULT_MAX = 10;
+	public static final int DEFAULT_MAX = 1;
 	public static final int DEFAULT_SENT_SMS = 0;
 	public static final boolean DEFAULT_ACTIVE = false;
 	public static final boolean DEFAULT_NOTIFY = false;

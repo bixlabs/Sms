@@ -99,22 +99,7 @@ public class MainActivity extends AppCompatActivity {
 		JodaTimeAndroid.init(this);
 		contextOfApplication = getApplicationContext();
 		settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-
-		// Check number key as this was once a string
-		// and it needs to be an integer now or it will throw an exception
-		String maxKey = null;
-
-		try {
-			maxKey = settings.getString(KEY_MAX, "0");
-		} catch(ClassCastException e) {
-			Log.e("Conversion error", "Max key is not string");
-		}
-
-		if (maxKey != null) {
-			editor = settings.edit();
-			editor.remove(KEY_MAX);
-			editor.apply();
-		}
+		checkMaxKey();
 
 		// Set the click listener for program schedule button
 		scheduleButton = (Button) findViewById(R.id.button_configure_schedule);
@@ -269,6 +254,26 @@ public class MainActivity extends AppCompatActivity {
 			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_SEND_SMS);
 		} else {
 			goToSettings();
+		}
+	}
+
+	private void checkMaxKey() {
+		boolean convertionError = false;
+
+		try {
+			settings.getString(KEY_MAX, "1");
+		} catch(ClassCastException e) {
+			convertionError = true;
+			Log.e("Conversion error", "Max key is not string");
+		}
+
+		// If there wasn't an error it means that the key max contains a string
+		// So we have to delete it, this is because in older versions
+		// This key was a string and now it needs to be integer
+		if (!convertionError) {
+			editor = settings.edit();
+			editor.remove(KEY_MAX);
+			editor.apply();
 		}
 	}
 
