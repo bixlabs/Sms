@@ -22,7 +22,7 @@
     android:dialogTitle="Ingrese texto"
     android:inputType="text" />
 
-  <uy.com.bix.app.smsproject.classes.VNTNumberPickerPreference
+  <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
     android:defaultValue="@integer/minSms"
     android:key="Max"
     android:title="Cantidad máxima de SMS"
