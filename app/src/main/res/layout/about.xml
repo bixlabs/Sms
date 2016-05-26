@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="29dp"
+              android:paddingRight="29dp"
+              android:paddingTop="26dp"
+              android:paddingBottom="15dp">
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+      android:id="@+id/image_brand_about"
+      android:layout_width="100dp"
+      android:layout_height="55dp"
+      android:src="@drawable/brand_about"
+      android:contentDescription="@string/description_image_solidario"
+      android:layout_alignParentLeft="true"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true">
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:id="@+id/textView_about_app_name"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Version"
+        android:id="@+id/textView_about_version"
+        android:textColor="@color/gratitudeMainText"
+        android:textSize="16sp" />
+
+    </LinearLayout>
+
+  </RelativeLayout>
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/about_interest"
+    android:id="@+id/textView_about_interest"
+    android:textColor="@color/black"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center_horizontal"
+    android:textSize="13sp"
+    android:autoLink="email" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/about_developed_by"
+    android:id="@+id/textView_about_developed_by"
+    android:textColor="@color/gratitudeMainText"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center_horizontal"
+    android:textSize="12sp" />
+
+  <ImageView
+    android:id="@+id/image_bixlabs"
+    android:layout_width="wrap_content"
+    android:layout_height="25dp"
+    android:src="@drawable/logo_bix_labs"
+    android:contentDescription="@string/description_image_solidario"
+    android:layout_marginTop="15dp"
+    android:layout_gravity="center_horizontal" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/about_bixlabs_web"
+    android:id="@+id/textView_about_bixlabs_web"
+    android:textColor="@color/link_color"
+    android:layout_marginTop="15dp"
+    android:layout_gravity="center_horizontal"
+    android:textSize="18sp"
+    android:autoLink="web" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/about_bixlabs_copyright"
+    android:id="@+id/textView_about_copyrights"
+    android:textColor="@color/gratitudeMainText"
+    android:layout_marginTop="30dp"
+    android:layout_gravity="center_horizontal"
+    android:textSize="12sp" />
+
+</LinearLayout>

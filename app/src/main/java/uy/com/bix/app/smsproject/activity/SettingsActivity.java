@@ -1,13 +1,10 @@
 package uy.com.bix.app.smsproject.activity;
 
 import android.annotation.TargetApi;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -21,14 +18,25 @@ import android.preference.PreferenceScreen;
 import android.support.annotation.LayoutRes;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
 import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_ACTIVE;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_CONFIGURED;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_DAY;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_HOUR;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_LAST_DAY;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MINUTE;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_MONTH;
+import static uy.com.bix.app.smsproject.classes.Constants.KEY_YEAR;
 import static uy.com.bix.app.smsproject.classes.Constants.ORGANIZATION_INFO;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
@@ -38,13 +46,14 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.DateTime;
 
 import uy.com.bix.app.smsproject.R;
-import uy.com.bix.app.smsproject.classes.AlertReceiver;
+import uy.com.bix.app.smsproject.classes.Scheduler;
 
-public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener,
+				android.support.v7.widget.Toolbar.OnMenuItemClickListener{
 
 	int expirationYear, expirationMonth, expirationDay, expirationHour, expirationMinute;
 	String selectedOrganization;
-	boolean isLastDay, isActive;
+	boolean isLastDay;
 	private AppCompatDelegate mDelegate;
 	Preference messagePreference, phonePreference;
 
@@ -63,6 +72,19 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		getDelegate().installViewFactory();
 		getDelegate().onCreate(savedInstanceState);
 		super.onCreate(savedInstanceState);
+		// Set up the toolbar
+		setContentView(R.layout.activity_settings);
+		setTheme(R.style.PreferenceList);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
+		toolbar.inflateMenu(R.menu.menu_settings);
+		toolbar.setOnMenuItemClickListener(this);
+		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+
 		addPreferencesFromResource(R.xml.settings_activity);
 		contextOfApplication = getApplicationContext();
 
@@ -274,12 +296,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 
 		// The month in the date picker is in 0-11 range
-		expirationMonth = settings.getInt("Month", today.getMonthOfYear()) - 1;
-		expirationDay = settings.getInt("Day", today.getDayOfMonth());
-		expirationHour = settings.getInt("Hour", DEFAULT_HOUR);
-		expirationMinute = settings.getInt("Minute", DEFAULT_MINUTES);
-		isLastDay = settings.getBoolean("LastDay", false);
-		expirationYear = settings.getInt("Year", today.getYear());
+		expirationMonth = settings.getInt(KEY_MONTH, today.getMonthOfYear()) - 1;
+		expirationDay = settings.getInt(KEY_DAY, today.getDayOfMonth());
+		expirationHour = settings.getInt(KEY_HOUR, DEFAULT_HOUR);
+		expirationMinute = settings.getInt(KEY_MINUTE, DEFAULT_MINUTES);
+		isLastDay = settings.getBoolean(KEY_LAST_DAY, false);
+		expirationYear = settings.getInt(KEY_YEAR, today.getYear());
 		selectedOrganization = settings.getString(ORGANIZATION_KEY, "ASH");
 	}
 
@@ -319,21 +341,20 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			// We save the user preferences using the default shared preferences
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 			SharedPreferences.Editor editor = settings.edit();
-			editor.putInt("Year", expirationYear);
-			editor.putInt("Month", expirationMonth + 1);
-			editor.putInt("Day", expirationDay);
-			editor.putInt("Hour", expirationHour);
-			editor.putInt("Minute", expirationMinute);
+			editor.putInt(KEY_YEAR, expirationYear);
+			editor.putInt(KEY_MONTH, expirationMonth + 1);
+			editor.putInt(KEY_DAY, expirationDay);
+			editor.putInt(KEY_HOUR, expirationHour);
+			editor.putInt(KEY_MINUTE, expirationMinute);
+			editor.putBoolean(KEY_CONFIGURED, true);
+			editor.putBoolean(KEY_ACTIVE, true);
 			editor.apply();
 
 			// The date must be in milliseconds
 			long whenToFireTask = sendingDate.getMillis();
-
-			isActive = settings.getBoolean("Active", false);
-			if (isActive) {
-				scheduleAlarm(whenToFireTask);
-				System.out.println(sendingDate);
-			}
+			Scheduler scheduler = new Scheduler();
+			scheduler.scheduleAlarm(this, whenToFireTask);
+			System.out.println(sendingDate);
 
 			Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 		}
@@ -353,6 +374,14 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		return null;
 	}
 
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_done) {
+			finish();
+		}
+		return false;
+	}
 	private DatePickerDialog.OnDateSetListener dPickerListener
 		= new DatePickerDialog.OnDateSetListener() {
 			@Override
@@ -400,22 +429,4 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 
 	};
-
-	public void scheduleAlarm(long dateOfFiring)
-	{
-		// create an Intent and set the class which will execute when Alarm triggers, here we have
-		// given AlertReceiver in the Intent, the onReceive() method of this class will execute when
-		// alarm triggers
-		Intent intentAlarm = new Intent(this, AlertReceiver.class);
-
-		// Create the object
-		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT);
-
-		// Cancel any existing alarm for this app
-		alarmManager.cancel(pendingIntent);
-
-		// set the alarm for particular time
-		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfFiring, pendingIntent);
-	}
 }

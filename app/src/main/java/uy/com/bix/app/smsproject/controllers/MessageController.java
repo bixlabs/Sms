@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
-import android.util.Log;
+import android.widget.Toast;
+
 import static uy.com.bix.app.smsproject.classes.Constants.MSG_SENT;
 
 
@@ -40,7 +41,7 @@ public class MessageController extends AppCompatActivity {
       SmsManager smsManager = SmsManager.getDefault();
       smsManager.sendTextMessage(phoneNumber, null, text, sentPI, null);
     } catch (IllegalArgumentException e) {
-      Log.d("Exception: ", e.getMessage());
+      Toast.makeText(appContext, e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
   }
