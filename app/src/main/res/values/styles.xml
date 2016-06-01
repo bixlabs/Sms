@@ -63,4 +63,9 @@
     <item name="android:textColorPrimary">@color/grapeFruit</item>
   </style>
 
+  <style name="ValidateButton" parent="@android:style/Widget.Button">
+    <item name="colorButtonNormal">@color/validateButton</item>
+    <item name="android:textAllCaps">false</item>
+  </style>
+
 </resources>

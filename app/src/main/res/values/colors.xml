@@ -17,6 +17,7 @@
     <item name="gratitudeMainText" type="color">#5b5b5b</item>
     <item name="letsBeginText" type="color">#0a4c7e</item>
     <item name="programButton" type="color">#18d5cd</item>
+    <item name="validateButton" type="color">#18D57B</item>
     <item name="grapeFruit" type="color">#ff6464</item>
     <item name="toggleAppStatusActive" type="color">#64bd63</item>
     <item name="toggleAppStatusInactive" type="color">#cccccc</item>

@@ -12,3 +12,12 @@ gradle.properties
 
 .DS_Store
 /build
+
+# Fabric
+app/fabric.properties
+
+# apks
+app/*.apk
+
+# jks
+*.jks

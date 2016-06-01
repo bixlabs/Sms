@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingLeft="29dp"
+  android:paddingRight="29dp"
+  android:paddingTop="26dp"
+  android:paddingBottom="15dp">
+
+  <ImageView
+    android:id="@+id/image_brand_permission"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:src="@drawable/brand_about"
+    android:contentDescription="@string/description_image_solidario"/>
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/permission_work_correctly"
+    android:id="@+id/textView_permission_work_correctly"
+    android:textColor="@color/gratitudeMainText"
+    android:layout_marginTop="20dp"
+    android:textSize="14sp"
+    android:layout_gravity="left"/>
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/permission_important"
+    android:id="@+id/textView_permission_important"
+    android:textColor="@color/black"
+    android:layout_marginTop="10dp"
+    android:textSize="14sp"
+    android:layout_gravity="left"
+    android:textStyle="bold" />
+
+  <Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/permission_validated"
+    android:id="@+id/button_permission_validated"
+    android:textColor="@color/white"
+    android:textSize="22sp"
+    android:theme="@style/ValidateButton"
+    android:layout_marginTop="20dp" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/permission_thanks"
+    android:id="@+id/textView_permission_thanks"
+    android:textColor="@color/letsBeginText"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center_horizontal"
+    android:textSize="16sp" />
+
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/about_bixlabs_copyright"
+    android:id="@+id/textView_permission_copyrights"
+    android:textColor="@color/gratitudeMainText"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center_horizontal"
+    android:textSize="12sp" />
+
+</LinearLayout>

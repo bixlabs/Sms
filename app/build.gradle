@@ -6,11 +6,11 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "uy.com.bix.app.smsproject"
+        applicationId "com.bixlabs.smssolidario"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 12
-        versionName "1.12"
+        versionCode 14
+        versionName "1.0.14"
     }
 
     signingConfigs {

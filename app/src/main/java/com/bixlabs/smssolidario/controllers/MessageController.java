@@ -1,14 +1,17 @@
-package uy.com.bix.app.smsproject.controllers;
+package com.bixlabs.smssolidario.controllers;
 
 
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
-import static uy.com.bix.app.smsproject.classes.Constants.MSG_SENT;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_ERROR;
+import static com.bixlabs.smssolidario.classes.Constants.MSG_SENT;
 
 
 public class MessageController extends AppCompatActivity {
@@ -41,6 +44,10 @@ public class MessageController extends AppCompatActivity {
       SmsManager smsManager = SmsManager.getDefault();
       smsManager.sendTextMessage(phoneNumber, null, text, sentPI, null);
     } catch (IllegalArgumentException e) {
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+      SharedPreferences.Editor editor = settings.edit();
+      editor.putBoolean(KEY_ERROR, true);
+      editor.apply();
       Toast.makeText(appContext, e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 

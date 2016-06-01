@@ -1,4 +1,4 @@
-package uy.com.bix.app.smsproject;
+package com.bixlabs.smssolidario;
 
 /**
  * Created by marcosmorales on 3/24/16.

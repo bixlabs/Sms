@@ -1,4 +1,4 @@
-package uy.com.bix.app.smsproject.activity;
+package com.bixlabs.smssolidario.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.view.Window;
 
-import uy.com.bix.app.smsproject.R;
+import com.bixlabs.smssolidario.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 

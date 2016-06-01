@@ -1,4 +1,4 @@
-package uy.com.bix.app.smsproject.classes;
+package com.bixlabs.smssolidario.classes;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

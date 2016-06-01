@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uy.com.bix.app.smsproject" >
+    package="com.bixlabs.smssolidario" >
 
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
@@ -9,13 +9,13 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <application android:name=".SmsAnalyticsApplication"
+    <application android:name="com.bixlabs.smssolidario.SmsAnalyticsApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Sms Solidario"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.SplashScreenActivity"
+            android:name="com.bixlabs.smssolidario.activity.SplashScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreenTheme" >
             <intent-filter>
@@ -25,24 +25,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.bixlabs.smssolidario.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:label="">
         </activity>
 
-        <receiver android:name=".classes.SmsReceiver" >
+        <receiver android:name="com.bixlabs.smssolidario.classes.SmsReceiver" >
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name="com.bixlabs.smssolidario.activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" >
         </activity>
-        <receiver android:name=".classes.AlertReceiver">
+        <receiver android:name="com.bixlabs.smssolidario.classes.AlertReceiver">
             <intent-filter>
                 <action android:name="SMS_SENT" />
             </intent-filter>

@@ -41,4 +41,10 @@
   <string name="about_bixlabs_web">www.bixlabs.com</string>
   <string name="about_bixlabs_copyright">©2016 BixLabs</string>
   <string name="toaster_sending_sms">Se va a donar dinero de tu saldo, muchas gracias! :)</string>
+  <string name="accept">Aceptar</string>
+  <string name="cancel">Cancelar</string>
+  <string name="permission_work_correctly">Para que la aplicación funcione correctamente, necesitamos que le indiques a tu celular que esta app enviará mensajes programados por ti.</string>
+  <string name="permission_important">Es importante que actives "recordar mi selección".</string>
+  <string name="permission_validated">Ser donante validado :)</string>
+  <string name="permission_thanks">¡Gracias por ser parte!</string>
 </resources>

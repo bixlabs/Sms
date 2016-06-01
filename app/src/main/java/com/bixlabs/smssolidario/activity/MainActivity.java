@@ -1,4 +1,4 @@
-package uy.com.bix.app.smsproject.activity;
+package com.bixlabs.smssolidario.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.awesomego.widget.ToggleButton;
@@ -34,25 +36,34 @@ import com.google.android.gms.analytics.ecommerce.ProductAction;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import io.fabric.sdk.android.Fabric;
-import uy.com.bix.app.smsproject.BuildConfig;
-import uy.com.bix.app.smsproject.R;
-import uy.com.bix.app.smsproject.SmsAnalyticsApplication;
+import org.joda.time.DateTime;
 
-import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_ACTIVE;
-import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_CONFIGURED;
-import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_SENT_SMS;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_ACTIVE;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_CONFIGURED;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_MAX;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_SENT_SMS;
+import io.fabric.sdk.android.Fabric;
+import com.bixlabs.smssolidario.BuildConfig;
+import com.bixlabs.smssolidario.R;
+import com.bixlabs.smssolidario.SmsAnalyticsApplication;
+
+import static com.bixlabs.smssolidario.classes.Constants.COMPANY_NAME;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_ALLOWED_PREMIUM;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_CONFIGURED;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MESSAGE;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_PHONE;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SENT_SMS;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_ALLOWED_PREMIUM;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_CONFIGURED;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_MAX;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_MESSAGE;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_PHONE;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_SENT_SMS;
 
 
 public class MainActivity extends AppCompatActivity {
 
 	private static final int PERMISSION_SEND_SMS = 24601;
 	public static Context contextOfApplication;
-	boolean isConfigured, isActive;
+	boolean isConfigured, isActive, allowedPremium;
 	int totalMessages;
 	SharedPreferences settings;
 	ViewFlipper mainViewFlipper;
@@ -60,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 	Button scheduleButton;
 	ToggleButton toggleButton;
 	SharedPreferences.Editor editor;
+  AlertDialog smsPermissionDialog;
+  AlertDialog.Builder builderDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,34 +80,8 @@ public class MainActivity extends AppCompatActivity {
 		Fabric.with(this, new Crashlytics());
 		setContentView(R.layout.activity_main);
 
-		// Set the toolbar and the custom view with the logo
-		final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app);
-		setSupportActionBar(toolbar);
-		final ActionBar actionBar = getSupportActionBar();
-		View view = getLayoutInflater().inflate(R.layout.actionbar_home, null);
-		actionBar.setDisplayShowCustomEnabled(true);
-		actionBar.setCustomView(view);
-
-		// Obtain the shared Tracker instance.
-		SmsAnalyticsApplication application = (SmsAnalyticsApplication) getApplication();
-		Tracker tracker = application.getDefaultTracker();
-
-		Product product = new Product()
-				.setName("Sms")
-				.setPrice(40.00);
-
-		ProductAction productAction = new ProductAction(ProductAction.ACTION_PURCHASE)
-				.setTransactionId("TestingTransactionId");
-
-		// Add the transaction data to the event.
-		HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder()
-				.setCategory("Donation")
-				.setAction("Purchase")
-				.addProduct(product)
-				.setProductAction(productAction);
-
-		// Send the transaction data with the event.
-		tracker.send(builder.build());
+    setToolBar();
+    sendTrackerInstance();
 
 		JodaTimeAndroid.init(this);
 		contextOfApplication = getApplicationContext();
@@ -158,6 +145,14 @@ public class MainActivity extends AppCompatActivity {
 		checkConfiguration();
 		checkIfActive();
 		changeLayout();
+    if (smsPermissionDialog == null) {
+      testSmsPremium();
+    }
+    if (isActive && !allowedPremium) {
+      smsPermissionDialog.show();
+    } else {
+      smsPermissionDialog.dismiss();
+    }
 	}
 
 	@Override
@@ -173,7 +168,49 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	private void showAbout() {
+  /**
+   * Sets the tool bar with a custom view
+   */
+  private void setToolBar() {
+    // Set the toolbar and the custom view with the logo
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app);
+    setSupportActionBar(toolbar);
+    final ActionBar actionBar = getSupportActionBar();
+    View view = getLayoutInflater().inflate(R.layout.actionbar_home, null);
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setCustomView(view);
+  }
+
+  /**
+   * Sends the tracker for google analytics
+   */
+  private void sendTrackerInstance() {
+    // Obtain the shared Tracker instance.
+    SmsAnalyticsApplication application = (SmsAnalyticsApplication) getApplication();
+    Tracker tracker = application.getDefaultTracker();
+
+    Product product = new Product()
+      .setName("Sms")
+      .setPrice(40.00);
+
+    ProductAction productAction = new ProductAction(ProductAction.ACTION_PURCHASE)
+      .setTransactionId("TestingTransactionId");
+
+    // Add the transaction data to the event.
+    HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder()
+      .setCategory("Donation")
+      .setAction("Purchase")
+      .addProduct(product)
+      .setProductAction(productAction);
+
+    // Send the transaction data with the event.
+    tracker.send(builder.build());
+  }
+
+  /**
+   * Shows the about dialog with info of the app
+   */
+  private void showAbout() {
 		String versionName = BuildConfig.VERSION_NAME;
 		View aboutView = getLayoutInflater().inflate(R.layout.about, null, false);
 		TextView version = (TextView) aboutView.findViewById(R.id.textView_about_version);
@@ -183,8 +220,12 @@ public class MainActivity extends AppCompatActivity {
 		String interestParagraph = getString(R.string.about_interest);
 		SpannableString interestText = new SpannableString(interestParagraph);
 		interestText.setSpan(new ForegroundColorSpan(Color.BLUE), 132, 147, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		interest.setText(interestText);
-		AlertDialog.Builder aboutDialog = new AlertDialog.Builder(this);
+    interest.setText(interestText);
+    DateTime today = DateTime.now();
+    String copyrightText = "©" + Integer.toString(today.getYear()) + " " + COMPANY_NAME;
+    TextView copyright = (TextView) aboutView.findViewById(R.id.textView_about_copyrights);
+    copyright.setText(copyrightText);
+    AlertDialog.Builder aboutDialog = new AlertDialog.Builder(this);
 		aboutDialog.setView(aboutView);
 		aboutDialog.create();
 		aboutDialog.show();
@@ -199,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void checkSecondLayout() {
-		if (isConfigured && totalMessages < 1 ) {
+		if (isConfigured && totalMessages < 1 && isActive) {
 			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_donation, 0, 0, 0);
 			scheduleButton.setText(R.string.activity_main_edit_donation);
 			mainViewFlipper.setDisplayedChild(1);
@@ -235,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
 		isActive = settings.getBoolean(KEY_ACTIVE, DEFAULT_ACTIVE);
 		totalMessages = settings.getInt(KEY_SENT_SMS, DEFAULT_SENT_SMS);
 		isConfigured = settings.getBoolean(KEY_CONFIGURED, DEFAULT_CONFIGURED);
+    allowedPremium = settings.getBoolean(KEY_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
 	}
 
 	private void checkIfActive() {
@@ -257,7 +299,13 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	private void checkMaxKey() {
+  /**
+   * Checks the value for the Max SMS to be send key in the shared preferences
+   * This key was previously a string in older versions
+   * So we need to check if the key is string to delete it as it needs
+   * To be an integer now, otherwise an exception will be thrown
+   */
+  private void checkMaxKey() {
 		boolean convertionError = false;
 
 		try {
@@ -293,4 +341,37 @@ public class MainActivity extends AppCompatActivity {
 			}
 		}
 	}
+
+  public void testSmsPremium() {
+    builderDialog = new AlertDialog.Builder(this);
+    View aboutView = getLayoutInflater().inflate(R.layout.sms_permission, null, false);
+    builderDialog.setView(aboutView);
+    DateTime today = DateTime.now();
+    String copyrightText = "©" + Integer.toString(today.getYear()) + " " + COMPANY_NAME;
+    TextView copyright = (TextView) aboutView.findViewById(R.id.textView_permission_copyrights);
+    copyright.setText(copyrightText);
+    smsPermissionDialog = builderDialog.create();
+    Button validate = (Button) aboutView.findViewById(R.id.button_permission_validated);
+    validate.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        smsPermissionDialog.dismiss();
+        sendTestSms();
+      }
+    });
+  }
+
+  public void sendTestSms() {
+    String phoneNumber = settings.getString(KEY_PHONE, DEFAULT_PHONE);
+    String textMessage = settings.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
+    editor = settings.edit();
+    editor.putBoolean(KEY_ALLOWED_PREMIUM, true);
+    editor.apply();
+    try {
+      SmsManager smsManager = SmsManager.getDefault();
+      smsManager.sendTextMessage(phoneNumber, null, textMessage, null, null);
+    } catch (IllegalArgumentException e) {
+      Toast.makeText(contextOfApplication, e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+  }
 }

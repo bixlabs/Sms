@@ -1,4 +1,4 @@
-package uy.com.bix.app.smsproject.activity;
+package com.bixlabs.smssolidario.activity;
 
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
@@ -27,17 +27,17 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_HOUR;
-import static uy.com.bix.app.smsproject.classes.Constants.DEFAULT_MINUTES;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_ACTIVE;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_CONFIGURED;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_DAY;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_HOUR;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_LAST_DAY;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_MINUTE;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_MONTH;
-import static uy.com.bix.app.smsproject.classes.Constants.KEY_YEAR;
-import static uy.com.bix.app.smsproject.classes.Constants.ORGANIZATION_INFO;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_HOUR;
+import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MINUTES;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_CONFIGURED;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_HOUR;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_LAST_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_MINUTE;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_MONTH;
+import static com.bixlabs.smssolidario.classes.Constants.KEY_YEAR;
+import static com.bixlabs.smssolidario.classes.Constants.ORGANIZATION_INFO;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 
@@ -45,8 +45,8 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.DateTime;
 
-import uy.com.bix.app.smsproject.R;
-import uy.com.bix.app.smsproject.classes.Scheduler;
+import com.bixlabs.smssolidario.R;
+import com.bixlabs.smssolidario.classes.Scheduler;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener,
 				android.support.v7.widget.Toolbar.OnMenuItemClickListener{
@@ -306,7 +306,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 
 	private void updateMessageAndPhoneData(String key) {
-		System.out.println(key);
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 		SharedPreferences.Editor editor = settings.edit();
 		if (key != "0") {
@@ -354,7 +353,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			long whenToFireTask = sendingDate.getMillis();
 			Scheduler scheduler = new Scheduler();
 			scheduler.scheduleAlarm(this, whenToFireTask);
-			System.out.println(sendingDate);
 
 			Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 		}

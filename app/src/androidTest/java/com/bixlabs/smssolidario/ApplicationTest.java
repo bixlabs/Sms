@@ -1,4 +1,4 @@
-package uy.com.bix.app.smsproject;
+package uy.com.bix.bixlabs.smssolidario;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
