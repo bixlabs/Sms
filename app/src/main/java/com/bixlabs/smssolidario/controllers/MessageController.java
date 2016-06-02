@@ -6,15 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ERROR;
-import static com.bixlabs.smssolidario.classes.Constants.MSG_SENT;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ERROR;
+import static com.bixlabs.smssolidario.classes.Constants.SMS_SENT;
 
 
-public class MessageController extends AppCompatActivity {
+public class MessageController {
 
   private static MessageController instance = null;
 
@@ -36,7 +35,7 @@ public class MessageController extends AppCompatActivity {
    */
   public void sendMessage(String phoneNumber, String text, final Context appContext) {
 
-    String sent = MSG_SENT;
+    String sent = SMS_SENT;
     PendingIntent sentPI = PendingIntent.getBroadcast(appContext, 0, new Intent(sent), 0);
 
     //We use SmsManager API to send the message
@@ -46,7 +45,7 @@ public class MessageController extends AppCompatActivity {
     } catch (IllegalArgumentException e) {
       SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
       SharedPreferences.Editor editor = settings.edit();
-      editor.putBoolean(KEY_ERROR, true);
+      editor.putBoolean(PREF_ERROR, true);
       editor.apply();
       Toast.makeText(appContext, e.getMessage(), Toast.LENGTH_SHORT).show();
     }

@@ -13,6 +13,6 @@
   android:clickable="false"
   android:focusable="false"
   android:longClickable="false"
-  android:src="@drawable/menu_logo_sms" />
+  android:src="@drawable/ic_menu_sms_solidario" />
 
 </LinearLayout>

@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content" >
 
   <ListPreference
     android:key="Organization"
-    android:title="Selecciona una ONG"
-    android:summary="Organización que recibirá la donación"
+    android:defaultValue="ASH"
     android:entries="@array/organizations"
     android:entryValues="@array/organization_values"
-    android:defaultValue="ASH" />
+    android:summary="Organización que recibirá la donación"
+    android:title="Selecciona una ONG" />
 
   <EditTextPreference
     android:key="Phone"
-    android:title="Ingresa un número de teléfono"
     android:dialogTitle="Nuevo número"
-    android:inputType="phone" />
+    android:inputType="phone"
+    android:title="Ingresa un número de teléfono" />
 
   <EditTextPreference
     android:key="Message"
-    android:title="Mensaje"
     android:dialogTitle="Ingrese texto"
-    android:inputType="text" />
+    android:inputType="text"
+    android:title="Mensaje" />
 
   <com.vanniktech.vntnumberpickerpreference.VNTNumberPickerPreference
-    android:defaultValue="@integer/minSms"
     android:key="Max"
+    android:defaultValue="@integer/minSms"
     android:title="Cantidad máxima de SMS"
     app:vnt_maxValue="@integer/maxSms"
     app:vnt_minValue="@integer/minSms"
-    app:vnt_setWrapSelectorWheel="true"/>
+    app:vnt_setWrapSelectorWheel="true" />
 
   <Preference
     android:key="btnDateFilter"
@@ -40,7 +43,7 @@
 
   <CheckBoxPreference
     android:key="Notify"
-    android:title="Notificar al enviar"
-    android:widgetLayout="@layout/switch_preference" />
+    android:widgetLayout="@layout/switch_preference"
+    android:title="Notificar al enviar" />
 
 </PreferenceScreen>

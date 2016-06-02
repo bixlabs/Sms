@@ -9,23 +9,23 @@ public final class Constants {
 	private Constants() {
 	}
 
-	public static final String MSG_SENT = "SMS_SENT";
-	public static final String KEY_MINUTE = "Minute";
-	public static final String KEY_HOUR = "Hour";
-	public static final String KEY_DAY = "Day";
-	public static final String KEY_MONTH = "Month";
-	public static final String KEY_YEAR = "Year";
-	public static final String KEY_ACTIVE = "Active";
-  public static final String KEY_ALLOWED_PREMIUM = "AllowedPremium";
-	public static final String KEY_SENT_SMS = "sentMessages";
-	public static final String KEY_LAST_DAY = "LastDay";
-	public static final String KEY_NOTIFY = "Notify";
-	public static final String KEY_PHONE = "Phone";
-	public static final String KEY_MESSAGE = "Message";
-	public static final String KEY_MAX = "Max";
-  public static final String KEY_SMS_TO_SEND = "MessagesToSend";
-	public static final String KEY_ERROR = "Error";
-	public static final String KEY_CONFIGURED = "Configured";
+	public static final String SMS_SENT = "SMS_SENT";
+	public static final String PREF_MINUTE = "Minute";
+	public static final String PREF_HOUR = "Hour";
+	public static final String PREF_DAY = "Day";
+	public static final String PREF_MONTH = "Month";
+	public static final String PREF_YEAR = "Year";
+	public static final String PREF_ACTIVE = "Active";
+  public static final String PREF_ALLOWED_PREMIUM = "AllowedPremium";
+	public static final String PREF_SENT_SMS = "sentMessages";
+	public static final String PREF_LAST_DAY = "LastDay";
+	public static final String PREF_NOTIFY = "Notify";
+	public static final String PREF_PHONE = "Phone";
+	public static final String PREF_MESSAGE = "Message";
+	public static final String PREF_MAX = "Max";
+  public static final String PREF_SMS_TO_SEND = "MessagesToSend";
+	public static final String PREF_ERROR = "Error";
+	public static final String PREF_CONFIGURED = "Configured";
 	public static final int DEFAULT_HOUR = 23;
 	public static final int DEFAULT_MINUTES = 30;
 	public static final int DEFAULT_MAX = 1;

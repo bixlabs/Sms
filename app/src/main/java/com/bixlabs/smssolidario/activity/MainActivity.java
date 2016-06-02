@@ -50,13 +50,13 @@ import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_CONFIGURED;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MESSAGE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_PHONE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SENT_SMS;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ACTIVE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ALLOWED_PREMIUM;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_CONFIGURED;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MAX;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MESSAGE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_PHONE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_SENT_SMS;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ALLOWED_PREMIUM;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_CONFIGURED;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MAX;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MESSAGE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_PHONE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_SENT_SMS;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_main, menu);
+		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
 
@@ -173,10 +173,10 @@ public class MainActivity extends AppCompatActivity {
    */
   private void setToolBar() {
     // Set the toolbar and the custom view with the logo
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app);
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
     setSupportActionBar(toolbar);
     final ActionBar actionBar = getSupportActionBar();
-    View view = getLayoutInflater().inflate(R.layout.actionbar_home, null);
+    View view = getLayoutInflater().inflate(R.layout.partial_actionbar_main, null);
     actionBar.setDisplayShowCustomEnabled(true);
     actionBar.setCustomView(view);
   }
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
    */
   private void showAbout() {
 		String versionName = BuildConfig.VERSION_NAME;
-		View aboutView = getLayoutInflater().inflate(R.layout.about, null, false);
+		View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
 		TextView version = (TextView) aboutView.findViewById(R.id.textView_about_version);
 		String aboutVersion = "Versión: " + versionName;
 		version.setText(aboutVersion);
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private void checkSecondLayout() {
 		if (isConfigured && totalMessages < 1 && isActive) {
-			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_donation, 0, 0, 0);
+			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_schedule, 0, 0, 0);
 			scheduleButton.setText(R.string.activity_main_edit_donation);
 			mainViewFlipper.setDisplayedChild(1);
 		}
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 	private void checkThirdLayout() {
 		if (isConfigured && totalMessages >= 1 ) {
 			if (isActive) {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_donation, 0, 0, 0);
+				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_schedule, 0, 0, 0);
 				scheduleButton.setText(R.string.activity_main_edit_donation);
 			} else {
 				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
@@ -273,10 +273,10 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void checkConfiguration() {
-		isActive = settings.getBoolean(KEY_ACTIVE, DEFAULT_ACTIVE);
-		totalMessages = settings.getInt(KEY_SENT_SMS, DEFAULT_SENT_SMS);
-		isConfigured = settings.getBoolean(KEY_CONFIGURED, DEFAULT_CONFIGURED);
-    allowedPremium = settings.getBoolean(KEY_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
+		isActive = settings.getBoolean(PREF_ACTIVE, DEFAULT_ACTIVE);
+		totalMessages = settings.getInt(PREF_SENT_SMS, DEFAULT_SENT_SMS);
+		isConfigured = settings.getBoolean(PREF_CONFIGURED, DEFAULT_CONFIGURED);
+    allowedPremium = settings.getBoolean(PREF_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
 	}
 
 	private void checkIfActive() {
@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 		boolean convertionError = false;
 
 		try {
-			settings.getString(KEY_MAX, "1");
+			settings.getString(PREF_MAX, "1");
 		} catch(ClassCastException e) {
 			convertionError = true;
 			Log.e("Conversion error", "Max key is not string");
@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 		// This key was a string and now it needs to be integer
 		if (!convertionError) {
 			editor = settings.edit();
-			editor.remove(KEY_MAX);
+			editor.remove(PREF_MAX);
 			editor.apply();
 		}
 	}
@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
 		} else {
 			statusText.setText(R.string.activity_main_app_status_inactive);
 			editor = settings.edit();
-			editor.putBoolean(KEY_ACTIVE, false);
+			editor.putBoolean(PREF_ACTIVE, false);
 			editor.apply();
 			checkConfiguration();
 			checkFirstLayout();
@@ -362,10 +362,10 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void sendTestSms() {
-    String phoneNumber = settings.getString(KEY_PHONE, DEFAULT_PHONE);
-    String textMessage = settings.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
+    String phoneNumber = settings.getString(PREF_PHONE, DEFAULT_PHONE);
+    String textMessage = settings.getString(PREF_MESSAGE, DEFAULT_MESSAGE);
     editor = settings.edit();
-    editor.putBoolean(KEY_ALLOWED_PREMIUM, true);
+    editor.putBoolean(PREF_ALLOWED_PREMIUM, true);
     editor.apply();
     try {
       SmsManager smsManager = SmsManager.getDefault();

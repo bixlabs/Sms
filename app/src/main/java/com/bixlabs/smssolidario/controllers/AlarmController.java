@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 
 import org.joda.time.DateTime;
 
@@ -17,14 +16,14 @@ import com.bixlabs.smssolidario.classes.AlertReceiver;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_HOUR;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_LAST_DAY;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MINUTES;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_DAY;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_HOUR;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_LAST_DAY;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MINUTE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MONTH;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_YEAR;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_HOUR;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_LAST_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MINUTE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MONTH;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_YEAR;
 
-public class AlarmController extends AppCompatActivity {
+public class AlarmController {
 
 	private static AlarmController instance = null;
 	long dateOfNextFiring;
@@ -45,15 +44,15 @@ public class AlarmController extends AppCompatActivity {
 	 */
 	public void configureNextMonthAlarm (DateTime actualExpirationDate, Context context) {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-    int expirationDay = settings.getInt(KEY_DAY, actualExpirationDate.getDayOfMonth());
-    int expirationHour = settings.getInt(KEY_HOUR, DEFAULT_HOUR);
-    int expirationMinute = settings.getInt(KEY_MINUTE, DEFAULT_MINUTES);
+    int expirationDay = settings.getInt(PREF_DAY, actualExpirationDate.getDayOfMonth());
+    int expirationHour = settings.getInt(PREF_HOUR, DEFAULT_HOUR);
+    int expirationMinute = settings.getInt(PREF_MINUTE, DEFAULT_MINUTES);
 		//We need to configure next month's alarm
 		DateTime nextExpirationDate = actualExpirationDate.withMinuteOfHour(expirationMinute);
 		nextExpirationDate = nextExpirationDate.withHourOfDay(expirationHour);
 		nextExpirationDate = nextExpirationDate.plusMonths(1);
 		int lastDayOfNextMonth = nextExpirationDate.dayOfMonth().withMaximumValue().getDayOfMonth();
-    boolean isLastDay = settings.getBoolean(KEY_LAST_DAY, DEFAULT_LAST_DAY);
+    boolean isLastDay = settings.getBoolean(PREF_LAST_DAY, DEFAULT_LAST_DAY);
 
 		//If the expirationDay is the last day of the month we must handle it differently
 		if (isLastDay) {
@@ -71,9 +70,9 @@ public class AlarmController extends AppCompatActivity {
 
 		// We need to update the preferences of the user according to the month
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putInt(KEY_YEAR, nextExpirationDate.getYear());
-		editor.putInt(KEY_MONTH, nextExpirationDate.getMonthOfYear());
-		editor.putInt(KEY_DAY, nextExpirationDate.getDayOfMonth());
+		editor.putInt(PREF_YEAR, nextExpirationDate.getYear());
+		editor.putInt(PREF_MONTH, nextExpirationDate.getMonthOfYear());
+		editor.putInt(PREF_DAY, nextExpirationDate.getDayOfMonth());
 		editor.apply();
 
 		// The date must be in milliseconds

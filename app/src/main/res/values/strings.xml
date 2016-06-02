@@ -40,6 +40,7 @@
   <string name="about_developed_by">Aplicación desarrollada y diseñada por:</string>
   <string name="about_bixlabs_web">www.bixlabs.com</string>
   <string name="about_bixlabs_copyright">©2016 BixLabs</string>
+  <string name="about_version">Versión</string>
   <string name="toaster_sending_sms">Se va a donar dinero de tu saldo, muchas gracias! :)</string>
   <string name="accept">Aceptar</string>
   <string name="cancel">Cancelar</string>
