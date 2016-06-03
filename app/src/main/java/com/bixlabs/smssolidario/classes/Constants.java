@@ -41,6 +41,9 @@ public final class Constants {
 	public static final String DEFAULT_PHONE = "1";
   public static final String COMPANY_NAME = "BixLabs";
 	public static final Map<String, String[]> ORGANIZATION_INFO;
+  public static final int VISIBILITY_PUBLIC = 1;
+  public static final int VISIBILITY_PRIVATE = 0;
+  public static final int VISIBILITY_SECRET = -1;
 	static {
 		Map<String, String[]> aMap = new HashMap<>();
 		aMap.put("ASH", new String[]{"Amigos", "24200"});

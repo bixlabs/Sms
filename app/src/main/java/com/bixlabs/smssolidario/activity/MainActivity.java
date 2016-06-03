@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -15,9 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -216,11 +212,6 @@ public class MainActivity extends AppCompatActivity {
 		TextView version = (TextView) aboutView.findViewById(R.id.textView_about_version);
 		String aboutVersion = "Versión: " + versionName;
 		version.setText(aboutVersion);
-		TextView interest = (TextView) aboutView.findViewById(R.id.textView_about_interest);
-		String interestParagraph = getString(R.string.about_interest);
-		SpannableString interestText = new SpannableString(interestParagraph);
-		interestText.setSpan(new ForegroundColorSpan(Color.BLUE), 132, 147, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    interest.setText(interestText);
     DateTime today = DateTime.now();
     String copyrightText = "©" + Integer.toString(today.getYear()) + " " + COMPANY_NAME;
     TextView copyright = (TextView) aboutView.findViewById(R.id.textView_about_copyrights);
@@ -233,16 +224,22 @@ public class MainActivity extends AppCompatActivity {
 
 	private void checkFirstLayout() {
 		if (!isActive && totalMessages < 1) {
-			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
-			scheduleButton.setText(R.string.activity_main_configure_schedule_text);
+      setButtonIconText(
+        scheduleButton,
+        R.drawable.ic_configure_schedule,
+        R.string.activity_main_configure_schedule_text
+      );
 			mainViewFlipper.setDisplayedChild(0);
 		}
 	}
 
 	private void checkSecondLayout() {
 		if (isConfigured && totalMessages < 1 && isActive) {
-			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_schedule, 0, 0, 0);
-			scheduleButton.setText(R.string.activity_main_edit_donation);
+      setButtonIconText(
+        scheduleButton,
+        R.drawable.ic_edit_schedule,
+        R.string.activity_main_edit_donation
+      );
 			mainViewFlipper.setDisplayedChild(1);
 		}
 	}
@@ -250,11 +247,17 @@ public class MainActivity extends AppCompatActivity {
 	private void checkThirdLayout() {
 		if (isConfigured && totalMessages >= 1 ) {
 			if (isActive) {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_schedule, 0, 0, 0);
-				scheduleButton.setText(R.string.activity_main_edit_donation);
+        setButtonIconText(
+          scheduleButton,
+          R.drawable.ic_edit_schedule,
+          R.string.activity_main_edit_donation
+        );
 			} else {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
-				scheduleButton.setText(R.string.activity_main_configure_schedule_text);
+        setButtonIconText(
+          scheduleButton,
+          R.drawable.ic_configure_schedule,
+          R.string.activity_main_configure_schedule_text
+        );
 			}
 			sentMessages.setText(Integer.toString(totalMessages));
 			mainViewFlipper.setDisplayedChild(2);
@@ -266,6 +269,17 @@ public class MainActivity extends AppCompatActivity {
 		checkSecondLayout();
 		checkThirdLayout();
 	}
+
+  /**
+   * Sets an icon and a text in a button
+   * @param button button which will contain the icon and the text
+   * @param iconResId id of the icon resource to be applied to the button
+   * @param stringResId id of the string resource to be applied to the button
+   */
+  private void setButtonIconText(Button button, int iconResId, int stringResId) {
+    button.setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
+    button.setText(getString(stringResId));
+  }
 
 	private void goToSettings() {
 		Intent intent = new Intent(this, SettingsActivity.class);
@@ -336,8 +350,11 @@ public class MainActivity extends AppCompatActivity {
 			checkConfiguration();
 			checkFirstLayout();
 			if (isConfigured && totalMessages > 0 ) {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
-				scheduleButton.setText(R.string.activity_main_configure_schedule_text);
+        setButtonIconText(
+          scheduleButton,
+          R.drawable.ic_configure_schedule,
+          R.string.activity_main_configure_schedule_text
+        );
 			}
 		}
 	}

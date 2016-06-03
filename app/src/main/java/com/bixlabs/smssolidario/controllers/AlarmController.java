@@ -2,16 +2,23 @@ package com.bixlabs.smssolidario.controllers;
 
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import org.joda.time.DateTime;
 
+import com.bixlabs.smssolidario.R;
+import com.bixlabs.smssolidario.activity.MainActivity;
 import com.bixlabs.smssolidario.classes.AlertReceiver;
+
+import java.text.SimpleDateFormat;
 
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_HOUR;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_LAST_DAY;
@@ -22,6 +29,7 @@ import static com.bixlabs.smssolidario.classes.Constants.PREF_LAST_DAY;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_MINUTE;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_MONTH;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_YEAR;
+import static com.bixlabs.smssolidario.classes.Constants.VISIBILITY_PUBLIC;
 
 public class AlarmController {
 
@@ -88,5 +96,29 @@ public class AlarmController {
 
 		//set the alarm for particular time
 		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfNextFiring, pendingIntent);
+    // Set the notification for next date
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    String formattedDate = dateFormat.format(nextExpirationDate.toDate());
+    Intent resultIntent = new Intent(context, MainActivity.class);
+    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+    stackBuilder.addParentStack(MainActivity.class);
+    stackBuilder.addNextIntent(resultIntent);
+    PendingIntent resultPendingIntent =
+      stackBuilder.getPendingIntent(
+        0,
+        PendingIntent.FLAG_CANCEL_CURRENT
+      );
+    NotificationCompat.Builder mBuilder =
+      new NotificationCompat.Builder(context)
+                              .setSmallIcon(R.drawable.notification_sms_solidario)
+                              .setContentTitle(context.getString(R.string.app_name))
+                              .setContentText(context.getString(R.string.notification_next_schedule) + " " + formattedDate)
+                              .setVisibility(VISIBILITY_PUBLIC)
+                              .setAutoCancel(true)
+                              .setContentIntent(resultPendingIntent);
+    NotificationManager mNotificationManager =
+      (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    int mnNotifyId = 2;
+    mNotificationManager.notify(mnNotifyId, mBuilder.build());
 	}
 }

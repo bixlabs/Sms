@@ -24,12 +24,6 @@
     <item name="colorPrimaryDark">@color/black</item>
   </style>
 
-  <!-- Style for the program button in the main activity -->
-  <style name="ScheduleButton" parent="@android:style/Widget.Button">
-    <item name="colorButtonNormal">@color/programButton</item>
-    <item name="android:textAllCaps">false</item>
-  </style>
-
   <style name="ActionBarSettings" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
     <item name="titleTextColor">@color/black</item>
     <item name="android:textColorPrimary">@color/grapeFruit</item>

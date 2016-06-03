@@ -48,4 +48,5 @@
   <string name="permission_important">Es importante que actives "recordar mi selección".</string>
   <string name="permission_validated">Ser donante validado :)</string>
   <string name="permission_thanks">¡Gracias por ser parte!</string>
+  <string name="notification_next_schedule">Próximo envío automático: </string>
 </resources>

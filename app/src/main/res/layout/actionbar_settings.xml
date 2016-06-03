@@ -6,7 +6,7 @@
   android:theme="@style/ActionBarSettings"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="@xml/rectangle_white"
+  android:background="@drawable/rectangle_white"
   android:elevation="4dp"
   android:minHeight="?attr/actionBarSize"
   app:navigationIcon="?attr/homeAsUpIndicator"

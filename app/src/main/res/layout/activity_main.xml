@@ -1,5 +1,6 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:toggle="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
@@ -91,14 +92,17 @@
 
   </RelativeLayout>
 
-  <Button
+  <com.phillipcalvin.iconbutton.IconButton
     android:id="@+id/button_configure_schedule"
-    android:theme="@style/ScheduleButton"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:background="@drawable/button_background"
     android:drawableLeft="@drawable/ic_configure_schedule"
     android:text="@string/activity_main_configure_schedule_text"
+    android:textAllCaps="false"
     android:textColor="@color/white"
-    android:textSize="32sp" />
+    android:textSize="32sp"
+    app:iconPadding="15dp" />
 
 </LinearLayout>

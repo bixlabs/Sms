@@ -1,11 +1,14 @@
 package com.bixlabs.smssolidario.classes;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -35,6 +38,7 @@ import static com.bixlabs.smssolidario.classes.Constants.PREF_NOTIFY;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_PHONE;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_SENT_SMS;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_SMS_TO_SEND;
+import static com.bixlabs.smssolidario.classes.Constants.VISIBILITY_PUBLIC;
 
 
 public class AlertReceiver extends BroadcastReceiver {
@@ -118,8 +122,18 @@ public class AlertReceiver extends BroadcastReceiver {
     String textMessage = settings.getString(PREF_MESSAGE, DEFAULT_MESSAGE);
     boolean notifyWhenSending = settings.getBoolean(PREF_NOTIFY, DEFAULT_NOTIFY);
     if (notifyWhenSending) {
-      Toast.makeText(context, context.getString(R.string.toaster_sending_sms),
-        Toast.LENGTH_LONG).show();
+      NotificationCompat.Builder mBuilder =
+        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_sms_solidario)
+                                .setContentTitle(context.getString(R.string.app_name))
+                                .setContentText(context.getString(R.string.toaster_sending_sms))
+                                .setNumber(maxMessages)
+                                .setVisibility(VISIBILITY_PUBLIC)
+                                .setAutoCancel(true);
+      NotificationManager mNotificationManager =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+      int mnNotifyId = 1;
+      mNotificationManager.notify(mnNotifyId, mBuilder.build());
     }
     MessageController msgController = MessageController.getInstance();
     msgController.sendMessage(phoneNumber, textMessage, context);
