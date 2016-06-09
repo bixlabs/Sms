@@ -29,14 +29,14 @@ import android.widget.Toast;
 
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_HOUR;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MINUTES;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ACTIVE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_CONFIGURED;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_DAY;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_HOUR;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_LAST_DAY;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MINUTE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MONTH;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_YEAR;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_CONFIGURED;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_HOUR;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_LAST_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MINUTE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MONTH;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_YEAR;
 import static com.bixlabs.smssolidario.classes.Constants.ORGANIZATION_INFO;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
@@ -76,7 +76,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		setContentView(R.layout.activity_settings);
 		setTheme(R.style.PreferenceList);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
-		toolbar.inflateMenu(R.menu.menu_settings);
+		toolbar.inflateMenu(R.menu.activity_settings);
 		toolbar.setOnMenuItemClickListener(this);
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
@@ -85,7 +85,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			}
 		});
 
-		addPreferencesFromResource(R.xml.settings_activity);
+		addPreferencesFromResource(R.xml.preference_settings);
 		contextOfApplication = getApplicationContext();
 
 		Preference btnDateFilter = findPreference("btnDateFilter");
@@ -296,12 +296,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 
 		// The month in the date picker is in 0-11 range
-		expirationMonth = settings.getInt(KEY_MONTH, today.getMonthOfYear()) - 1;
-		expirationDay = settings.getInt(KEY_DAY, today.getDayOfMonth());
-		expirationHour = settings.getInt(KEY_HOUR, DEFAULT_HOUR);
-		expirationMinute = settings.getInt(KEY_MINUTE, DEFAULT_MINUTES);
-		isLastDay = settings.getBoolean(KEY_LAST_DAY, false);
-		expirationYear = settings.getInt(KEY_YEAR, today.getYear());
+		expirationMonth = settings.getInt(PREF_MONTH, today.getMonthOfYear()) - 1;
+		expirationDay = settings.getInt(PREF_DAY, today.getDayOfMonth());
+		expirationHour = settings.getInt(PREF_HOUR, DEFAULT_HOUR);
+		expirationMinute = settings.getInt(PREF_MINUTE, DEFAULT_MINUTES);
+		isLastDay = settings.getBoolean(PREF_LAST_DAY, false);
+		expirationYear = settings.getInt(PREF_YEAR, today.getYear());
 		selectedOrganization = settings.getString(ORGANIZATION_KEY, "ASH");
 	}
 
@@ -340,13 +340,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			// We save the user preferences using the default shared preferences
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
 			SharedPreferences.Editor editor = settings.edit();
-			editor.putInt(KEY_YEAR, expirationYear);
-			editor.putInt(KEY_MONTH, expirationMonth + 1);
-			editor.putInt(KEY_DAY, expirationDay);
-			editor.putInt(KEY_HOUR, expirationHour);
-			editor.putInt(KEY_MINUTE, expirationMinute);
-			editor.putBoolean(KEY_CONFIGURED, true);
-			editor.putBoolean(KEY_ACTIVE, true);
+			editor.putInt(PREF_YEAR, expirationYear);
+			editor.putInt(PREF_MONTH, expirationMonth + 1);
+			editor.putInt(PREF_DAY, expirationDay);
+			editor.putInt(PREF_HOUR, expirationHour);
+			editor.putInt(PREF_MINUTE, expirationMinute);
+			editor.putBoolean(PREF_CONFIGURED, true);
+			editor.putBoolean(PREF_ACTIVE, true);
 			editor.apply();
 
 			// The date must be in milliseconds
@@ -367,7 +367,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			return datePickerDialog;
 		}
 		else if (id == TIME_DIALOG_ID) {
-			return new TimePickerDialog(this, timePickerListener, expirationHour, expirationMinute, false);
+			return new TimePickerDialog(this, timePickerListener, expirationHour, expirationMinute, true);
 		}
 		return null;
 	}

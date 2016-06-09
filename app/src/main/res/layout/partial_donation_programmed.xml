@@ -3,26 +3,26 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  android:background="@color/white"
   android:orientation="vertical"
-  android:weightSum="1"
-  android:background="@color/white">
+  android:weightSum="1" >
 
   <ImageView
     android:id="@+id/image_brand"
     android:layout_width="match_parent"
     android:layout_height="104dp"
-    android:src="@drawable/divider_brand"
+    android:layout_marginTop="38dp"
     android:contentDescription="@string/description_image_solidario"
-    android:layout_marginTop="38dp" />
+    android:src="@drawable/divider_sms_solidario" />
 
   <TextView
     android:id="@+id/text_programmed"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="30dp"
+    android:gravity="center"
     android:text="@string/activity_main_already_programmed"
     android:textColor="@color/gratitudeMainText"
-    android:textSize="19sp"
-    android:gravity="center"
-    android:layout_marginTop="30dp" />
+    android:textSize="19sp" />
 
 </LinearLayout>

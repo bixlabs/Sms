@@ -1,11 +1,14 @@
 package com.bixlabs.smssolidario.classes;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -25,16 +28,17 @@ import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_NOTIFY;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_PHONE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SENT_SMS;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SMS_TO_SEND;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ACTIVE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ALLOWED_PREMIUM;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_DAY;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ERROR;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MAX;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MESSAGE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_NOTIFY;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_PHONE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_SENT_SMS;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_SMS_TO_SEND;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ALLOWED_PREMIUM;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_DAY;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ERROR;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MAX;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MESSAGE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_NOTIFY;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_PHONE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_SENT_SMS;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_SMS_TO_SEND;
+import static com.bixlabs.smssolidario.classes.Constants.VISIBILITY_PUBLIC;
 
 
 public class AlertReceiver extends BroadcastReceiver {
@@ -49,53 +53,44 @@ public class AlertReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		try {
 			switch (getResultCode()) {
+        // When the alarm triggers
 				case Activity.RESULT_CANCELED:
           settings = PreferenceManager.getDefaultSharedPreferences(context);
-          boolean isActive = settings.getBoolean(KEY_ACTIVE, DEFAULT_ACTIVE);
+          boolean isActive = settings.getBoolean(PREF_ACTIVE, DEFAULT_ACTIVE);
+          // Check if the app is active to send the message
           if (isActive) {
-            JodaTimeAndroid.init(context);
-            int maxMessages = settings.getInt(KEY_MAX, DEFAULT_MAX);
-            editor = settings.edit();
-            editor.putInt(KEY_SMS_TO_SEND, maxMessages);
-            editor.apply();
-
-            phoneNumber = settings.getString(KEY_PHONE, DEFAULT_PHONE);
-            textMessage = settings.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
-            boolean notifyWhenSending = settings.getBoolean(KEY_NOTIFY, DEFAULT_NOTIFY);
-            if (notifyWhenSending) {
-              Toast.makeText(context, context.getString(R.string.toaster_sending_sms),
-                Toast.LENGTH_LONG).show();
-            }
-            msgController = MessageController.getInstance();
-            msgController.sendMessage(phoneNumber, textMessage, context);
+            sendFirstMessage(context);
           }
 					break;
+        // This is the case when the message is sent
 				case Activity.RESULT_OK:
           settings = PreferenceManager.getDefaultSharedPreferences(context);
-          boolean allowedPremium = settings.getBoolean(KEY_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
+          boolean allowedPremium = settings.getBoolean(PREF_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
+          // If the messages were sent successfully then we don't
+          // Need to show again the validation dialog
           if (!allowedPremium) {
             editor = settings.edit();
-            editor.putBoolean(KEY_ALLOWED_PREMIUM, true);
+            editor.putBoolean(PREF_ALLOWED_PREMIUM, true);
             editor.apply();
           }
-          int messagesToSend = settings.getInt(KEY_SMS_TO_SEND, DEFAULT_SMS_TO_SEND);
+          int messagesToSend = settings.getInt(PREF_SMS_TO_SEND, DEFAULT_SMS_TO_SEND);
           messagesToSend--;
-          sentMessages = settings.getInt(KEY_SENT_SMS, DEFAULT_SENT_SMS);
+          sentMessages = settings.getInt(PREF_SENT_SMS, DEFAULT_SENT_SMS);
           sentMessages++;
           editor = settings.edit();
-          editor.putInt(KEY_SENT_SMS, sentMessages);
-          editor.putInt(KEY_SMS_TO_SEND, messagesToSend);
-          editor.putBoolean(KEY_ERROR, false);
+          editor.putInt(PREF_SENT_SMS, sentMessages);
+          editor.putInt(PREF_SMS_TO_SEND, messagesToSend);
+          editor.putBoolean(PREF_ERROR, false);
           editor.apply();
           // If the day changes we stop sending messages to prevent spending wrong credit
           DateTime actualTime = DateTime.now();
           DateTime actualExpirationDate = DateTime.now();
-          int expirationDay = settings.getInt(KEY_DAY, actualExpirationDate.getDayOfMonth());
+          int expirationDay = settings.getInt(PREF_DAY, actualExpirationDate.getDayOfMonth());
           boolean stopForChangeOfDay = actualTime.getDayOfMonth() != expirationDay;
           boolean stopForMax = messagesToSend == 0;
           if (!stopForMax && !stopForChangeOfDay) {
-            phoneNumber = settings.getString(KEY_PHONE, DEFAULT_PHONE);
-            textMessage = settings.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
+            phoneNumber = settings.getString(PREF_PHONE, DEFAULT_PHONE);
+            textMessage = settings.getString(PREF_MESSAGE, DEFAULT_MESSAGE);
             msgController = MessageController.getInstance();
             msgController.sendMessage(phoneNumber, textMessage, context);
           } else {
@@ -115,12 +110,42 @@ public class AlertReceiver extends BroadcastReceiver {
 		}
 	}
 
+  private void sendFirstMessage(Context context) {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    JodaTimeAndroid.init(context);
+    int maxMessages = settings.getInt(PREF_MAX, DEFAULT_MAX);
+    SharedPreferences.Editor editor = settings.edit();
+    editor.putInt(PREF_SMS_TO_SEND, maxMessages);
+    editor.apply();
+
+    String phoneNumber = settings.getString(PREF_PHONE, DEFAULT_PHONE);
+    String textMessage = settings.getString(PREF_MESSAGE, DEFAULT_MESSAGE);
+    boolean notifyWhenSending = settings.getBoolean(PREF_NOTIFY, DEFAULT_NOTIFY);
+    if (notifyWhenSending) {
+      NotificationCompat.Builder mBuilder =
+        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.notification_sms_solidario)
+                                .setContentTitle(context.getString(R.string.app_name))
+                                .setContentText(context.getString(R.string.toaster_sending_sms))
+                                .setNumber(maxMessages)
+                                .setVisibility(VISIBILITY_PUBLIC)
+                                .setAutoCancel(true);
+      NotificationManager mNotificationManager =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+      int mnNotifyId = 1;
+      mNotificationManager.notify(mnNotifyId, mBuilder.build());
+    }
+    MessageController msgController = MessageController.getInstance();
+    msgController.sendMessage(phoneNumber, textMessage, context);
+  }
+
 	private void alertErrorWhileSendingSms (Context context) {
 		settings = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean(KEY_ERROR, true);
+		editor.putBoolean(PREF_ERROR, true);
 		editor.apply();
 		Toast.makeText(context, "Ha ocurrido un error", Toast.LENGTH_SHORT).show();
 	}
+
 }
 

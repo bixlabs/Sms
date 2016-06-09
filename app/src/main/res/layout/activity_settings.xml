@@ -5,14 +5,14 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical"
-  tools:context=".SettingsActivity">
+  tools:context=".SettingsActivity" >
 
   <include
-    layout="@layout/settings_toolbar"/>
+    layout="@layout/actionbar_settings" />
 
   <ListView
     android:id="@android:id/list"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"/>
+    android:layout_height="fill_parent" />
 
 </LinearLayout>

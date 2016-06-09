@@ -19,38 +19,9 @@
     <item name="actionMenuTextColor">@color/blackActionBar</item>
   </style>
 
-  <!-- Main application theme. -->
-  <style name="MainTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
-    <!-- Customize your theme here. -->
-    <item name="actionBarStyle">@style/MainActionBar</item>
-    <item name="actionBarTheme">@style/MainThemeOverlay</item>
-    <item name="listPreferredItemPaddingLeft">5dp</item>
-    <item name="listPreferredItemPaddingRight">5dp</item>
-    <item name="listPreferredItemHeight">20dp</item>
-  </style>
-
-  <style name="MainActionBar" parent="Base.Widget.AppCompat.ActionBar.Solid">
-    <item name="background">@color/greyActionBar</item>
-    <item name="logo">@drawable/menu_logo</item>
-    <item name="displayOptions">useLogo|showHome</item>
-  </style>
-
-  <style name="MainThemeOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-    <!-- title text color -->
-    <item name="android:textColorPrimary">@color/blackActionBar</item>
-    <!-- action menu item text color -->
-    <item name="actionMenuTextColor">@color/blackActionBar</item>
-  </style>
-
   <!-- Splash Screen application theme. -->
   <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="colorPrimaryDark">@color/black</item>
-  </style>
-
-  <!-- Style for the program button in the main activity -->
-  <style name="ScheduleButton" parent="@android:style/Widget.Button">
-    <item name="colorButtonNormal">@color/programButton</item>
-    <item name="android:textAllCaps">false</item>
   </style>
 
   <style name="ActionBarSettings" parent="ThemeOverlay.AppCompat.Dark.ActionBar">

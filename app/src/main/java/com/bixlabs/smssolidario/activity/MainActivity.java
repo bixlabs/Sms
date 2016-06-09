@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -15,9 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,13 +46,13 @@ import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_CONFIGURED;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MESSAGE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_PHONE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SENT_SMS;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ACTIVE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_ALLOWED_PREMIUM;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_CONFIGURED;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MAX;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_MESSAGE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_PHONE;
-import static com.bixlabs.smssolidario.classes.Constants.KEY_SENT_SMS;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ACTIVE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_ALLOWED_PREMIUM;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_CONFIGURED;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MAX;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_MESSAGE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_PHONE;
+import static com.bixlabs.smssolidario.classes.Constants.PREF_SENT_SMS;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -115,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_main, menu);
+		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
 
@@ -173,10 +169,10 @@ public class MainActivity extends AppCompatActivity {
    */
   private void setToolBar() {
     // Set the toolbar and the custom view with the logo
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_app);
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
     setSupportActionBar(toolbar);
     final ActionBar actionBar = getSupportActionBar();
-    View view = getLayoutInflater().inflate(R.layout.actionbar_home, null);
+    View view = getLayoutInflater().inflate(R.layout.partial_actionbar_main, null);
     actionBar.setDisplayShowCustomEnabled(true);
     actionBar.setCustomView(view);
   }
@@ -212,15 +208,10 @@ public class MainActivity extends AppCompatActivity {
    */
   private void showAbout() {
 		String versionName = BuildConfig.VERSION_NAME;
-		View aboutView = getLayoutInflater().inflate(R.layout.about, null, false);
+		View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
 		TextView version = (TextView) aboutView.findViewById(R.id.textView_about_version);
 		String aboutVersion = "Versión: " + versionName;
 		version.setText(aboutVersion);
-		TextView interest = (TextView) aboutView.findViewById(R.id.textView_about_interest);
-		String interestParagraph = getString(R.string.about_interest);
-		SpannableString interestText = new SpannableString(interestParagraph);
-		interestText.setSpan(new ForegroundColorSpan(Color.BLUE), 132, 147, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    interest.setText(interestText);
     DateTime today = DateTime.now();
     String copyrightText = "©" + Integer.toString(today.getYear()) + " " + COMPANY_NAME;
     TextView copyright = (TextView) aboutView.findViewById(R.id.textView_about_copyrights);
@@ -233,16 +224,22 @@ public class MainActivity extends AppCompatActivity {
 
 	private void checkFirstLayout() {
 		if (!isActive && totalMessages < 1) {
-			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
-			scheduleButton.setText(R.string.activity_main_configure_schedule_text);
+      setButtonIconText(
+        scheduleButton,
+        R.drawable.ic_configure_schedule,
+        R.string.activity_main_configure_schedule_text
+      );
 			mainViewFlipper.setDisplayedChild(0);
 		}
 	}
 
 	private void checkSecondLayout() {
 		if (isConfigured && totalMessages < 1 && isActive) {
-			scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_donation, 0, 0, 0);
-			scheduleButton.setText(R.string.activity_main_edit_donation);
+      setButtonIconText(
+        scheduleButton,
+        R.drawable.ic_edit_schedule,
+        R.string.activity_main_edit_donation
+      );
 			mainViewFlipper.setDisplayedChild(1);
 		}
 	}
@@ -250,11 +247,17 @@ public class MainActivity extends AppCompatActivity {
 	private void checkThirdLayout() {
 		if (isConfigured && totalMessages >= 1 ) {
 			if (isActive) {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_edit_donation, 0, 0, 0);
-				scheduleButton.setText(R.string.activity_main_edit_donation);
+        setButtonIconText(
+          scheduleButton,
+          R.drawable.ic_edit_schedule,
+          R.string.activity_main_edit_donation
+        );
 			} else {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
-				scheduleButton.setText(R.string.activity_main_configure_schedule_text);
+        setButtonIconText(
+          scheduleButton,
+          R.drawable.ic_configure_schedule,
+          R.string.activity_main_configure_schedule_text
+        );
 			}
 			sentMessages.setText(Integer.toString(totalMessages));
 			mainViewFlipper.setDisplayedChild(2);
@@ -267,16 +270,27 @@ public class MainActivity extends AppCompatActivity {
 		checkThirdLayout();
 	}
 
+  /**
+   * Sets an icon and a text in a button
+   * @param button button which will contain the icon and the text
+   * @param iconResId id of the icon resource to be applied to the button
+   * @param stringResId id of the string resource to be applied to the button
+   */
+  private void setButtonIconText(Button button, int iconResId, int stringResId) {
+    button.setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
+    button.setText(getString(stringResId));
+  }
+
 	private void goToSettings() {
 		Intent intent = new Intent(this, SettingsActivity.class);
 		startActivity(intent);
 	}
 
 	private void checkConfiguration() {
-		isActive = settings.getBoolean(KEY_ACTIVE, DEFAULT_ACTIVE);
-		totalMessages = settings.getInt(KEY_SENT_SMS, DEFAULT_SENT_SMS);
-		isConfigured = settings.getBoolean(KEY_CONFIGURED, DEFAULT_CONFIGURED);
-    allowedPremium = settings.getBoolean(KEY_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
+		isActive = settings.getBoolean(PREF_ACTIVE, DEFAULT_ACTIVE);
+		totalMessages = settings.getInt(PREF_SENT_SMS, DEFAULT_SENT_SMS);
+		isConfigured = settings.getBoolean(PREF_CONFIGURED, DEFAULT_CONFIGURED);
+    allowedPremium = settings.getBoolean(PREF_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
 	}
 
 	private void checkIfActive() {
@@ -309,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
 		boolean convertionError = false;
 
 		try {
-			settings.getString(KEY_MAX, "1");
+			settings.getString(PREF_MAX, "1");
 		} catch(ClassCastException e) {
 			convertionError = true;
 			Log.e("Conversion error", "Max key is not string");
@@ -320,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
 		// This key was a string and now it needs to be integer
 		if (!convertionError) {
 			editor = settings.edit();
-			editor.remove(KEY_MAX);
+			editor.remove(PREF_MAX);
 			editor.apply();
 		}
 	}
@@ -331,13 +345,16 @@ public class MainActivity extends AppCompatActivity {
 		} else {
 			statusText.setText(R.string.activity_main_app_status_inactive);
 			editor = settings.edit();
-			editor.putBoolean(KEY_ACTIVE, false);
+			editor.putBoolean(PREF_ACTIVE, false);
 			editor.apply();
 			checkConfiguration();
 			checkFirstLayout();
 			if (isConfigured && totalMessages > 0 ) {
-				scheduleButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_configure_schedule, 0, 0, 0);
-				scheduleButton.setText(R.string.activity_main_configure_schedule_text);
+        setButtonIconText(
+          scheduleButton,
+          R.drawable.ic_configure_schedule,
+          R.string.activity_main_configure_schedule_text
+        );
 			}
 		}
 	}
@@ -362,10 +379,10 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void sendTestSms() {
-    String phoneNumber = settings.getString(KEY_PHONE, DEFAULT_PHONE);
-    String textMessage = settings.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
+    String phoneNumber = settings.getString(PREF_PHONE, DEFAULT_PHONE);
+    String textMessage = settings.getString(PREF_MESSAGE, DEFAULT_MESSAGE);
     editor = settings.edit();
-    editor.putBoolean(KEY_ALLOWED_PREMIUM, true);
+    editor.putBoolean(PREF_ALLOWED_PREMIUM, true);
     editor.apply();
     try {
       SmsManager smsManager = SmsManager.getDefault();
