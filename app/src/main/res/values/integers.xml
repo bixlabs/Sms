@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <integer name="maxSms">10</integer>
+  <integer name="maxSms">50</integer>
   <integer name="minSms">1</integer>
 </resources>
