@@ -5,6 +5,7 @@
     <!-- Customize your theme here. -->
     <item name="actionBarStyle">@style/AppActionBar</item>
     <item name="actionBarTheme">@style/AppThemeOverlay</item>
+    <item name="android:statusBarColor">@color/black</item>
     <item name="colorPrimary">@color/grapeFruit</item>
   </style>
 
