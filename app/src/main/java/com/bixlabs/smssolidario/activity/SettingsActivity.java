@@ -1,10 +1,12 @@
 package com.bixlabs.smssolidario.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -81,6 +83,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Intent resultIntent = new Intent();
+				setResult(Activity.RESULT_OK, resultIntent);
 				finish();
 			}
 		});
@@ -354,7 +358,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			Scheduler scheduler = new Scheduler();
 			scheduler.scheduleAlarm(this, whenToFireTask);
 
-			Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
 		}
 
 	}

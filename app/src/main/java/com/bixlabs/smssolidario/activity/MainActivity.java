@@ -1,10 +1,12 @@
 package com.bixlabs.smssolidario.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -57,6 +59,7 @@ import static com.bixlabs.smssolidario.classes.Constants.PREF_SENT_SMS;
 
 public class MainActivity extends AppCompatActivity {
 
+	public static final int SETTINGS_SCREEN = 1;
 	private static final int PERMISSION_SEND_SMS = 24601;
 	public static Context contextOfApplication;
 	boolean isConfigured, isActive, allowedPremium;
@@ -99,12 +102,35 @@ public class MainActivity extends AppCompatActivity {
 
 		// Set the toggle button value and event when toggle changes
 		toggleButton = (ToggleButton) findViewById(R.id.toggle_app_status);
-		toggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged(){
+		toggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
 			@Override
 			public void onToggle(boolean on) {
 				changeAppStatus(on);
 			}
 		});
+
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode) {
+			case (SETTINGS_SCREEN) : {
+				if (resultCode == Activity.RESULT_OK) {
+					// TODO Extract the data returned from the child Activity.
+					Snackbar.make(this.findViewById(android.R.id.content), "Programación de donación cancelada", Snackbar.LENGTH_LONG)
+							.setAction("VOLVER", new View.OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+									startActivityForResult(intent, SETTINGS_SCREEN);
+								}
+							})
+							.show();
+				}
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -283,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private void goToSettings() {
 		Intent intent = new Intent(this, SettingsActivity.class);
-		startActivity(intent);
+		startActivityForResult(intent, SETTINGS_SCREEN);
 	}
 
 	private void checkConfiguration() {
