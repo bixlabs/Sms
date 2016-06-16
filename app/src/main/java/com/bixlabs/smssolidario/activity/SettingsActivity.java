@@ -21,6 +21,7 @@ import android.support.annotation.LayoutRes;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	int expirationYear, expirationMonth, expirationDay, expirationHour, expirationMinute;
 	String selectedOrganization;
 	boolean isLastDay;
+  boolean backPressed = false;
 	private AppCompatDelegate mDelegate;
 	Preference messagePreference, phonePreference;
 
@@ -83,8 +85,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent resultIntent = new Intent();
-				setResult(Activity.RESULT_OK, resultIntent);
 				finish();
 			}
 		});
@@ -166,7 +166,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	protected void onStop() {
 		super.onStop();
 		getDelegate().onStop();
-		saveSettings();
+    if(!backPressed) {
+      saveSettings();
+    }
 	}
 
 	@Override
@@ -193,7 +195,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		getPreferenceScreen()
 			.getSharedPreferences()
 			.unregisterOnSharedPreferenceChangeListener(this);
-		saveSettings();
+    if(!backPressed) {
+      saveSettings();
+    }
 	}
 
 	public void invalidateOptionsMenu() {
@@ -358,6 +362,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			Scheduler scheduler = new Scheduler();
 			scheduler.scheduleAlarm(this, whenToFireTask);
 
+      Toast.makeText(contextOfApplication, "Guardado exitoso", Toast.LENGTH_SHORT).show();
+
 		}
 
 	}
@@ -430,4 +436,15 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 
 	};
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+      this.backPressed = true;
+      Intent resultIntent = new Intent();
+      setResult(Activity.RESULT_OK, resultIntent);
+      finish();
+    }
+    return super.onKeyDown(keyCode, event);
+  }
 }
