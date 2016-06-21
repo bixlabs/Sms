@@ -2,10 +2,12 @@ package com.bixlabs.smssolidario.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -58,6 +60,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	String selectedOrganization;
 	boolean isLastDay;
   boolean backPressed = false;
+  boolean appActive = false;
 	private AppCompatDelegate mDelegate;
 	Preference messagePreference, phonePreference;
 
@@ -82,15 +85,20 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
 		toolbar.inflateMenu(R.menu.activity_settings);
 		toolbar.setOnMenuItemClickListener(this);
-		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
 
 		addPreferencesFromResource(R.xml.preference_settings);
 		contextOfApplication = getApplicationContext();
+
+    Preference btnOrganization = findPreference("Organization");
+    btnOrganization.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        ListPreference lp = (ListPreference) preference;
+        preference.setSummary(lp.getEntry());
+        return false;
+      }
+    });
 
 		Preference btnDateFilter = findPreference("btnDateFilter");
 		btnDateFilter.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -112,15 +120,25 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			}
 		});
 
+
+    Bundle bundleParameter = getIntent().getExtras();
+    if(bundleParameter != null) {
+      appActive = bundleParameter.getBoolean("active");
+    }
+
 		// We must hide the number and message preferences
 		messagePreference = findPreference(MESSAGE_KEY);
 		phonePreference = findPreference(NUMBER_KEY);
 		hideMessageAndPhonePreferences();
 
 		JodaTimeAndroid.init(this);
-		getPreferencesFromUser();
 
-		initSummary(getPreferenceScreen());
+    getPreferencesFromUser();
+
+    if(appActive) {
+      initSummary(getPreferenceScreen());
+    }
+
 	}
 
 	@Override
@@ -330,6 +348,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	};
 
 	public void saveSettings() {
+
 		DateTime sendingDate = DateTime.now();
 		sendingDate = sendingDate.withMinuteOfHour(expirationMinute);
 		sendingDate = sendingDate.withHourOfDay(expirationHour);
@@ -347,7 +366,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 			// We save the user preferences using the default shared preferences
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
-			SharedPreferences.Editor editor = settings.edit();
+      SharedPreferences.Editor editor = settings.edit();
+
 			editor.putInt(PREF_YEAR, expirationYear);
 			editor.putInt(PREF_MONTH, expirationMonth + 1);
 			editor.putInt(PREF_DAY, expirationDay);
@@ -385,7 +405,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	public boolean onMenuItemClick(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_done) {
-			finish();
+      
+      if (findPreference("btnDateFilter").getSummary() == null || findPreference("btnTimeFilter").getSummary() == null || findPreference("Organization").getSummary().equals("Organización que recibirá la donación")) {
+        emptyFieldsDialog();
+      }else{
+        finish();
+      }
+
 		}
 		return false;
 	}
@@ -436,6 +462,20 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 
 	};
+
+  public void emptyFieldsDialog() {
+    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+    alertDialogBuilder.setMessage("Por favor complete los campos vacíos");
+    alertDialogBuilder.setPositiveButton("Ok",
+      new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface arg0, int arg1) {
+        }
+      });
+    AlertDialog alertDialog = alertDialogBuilder.create();
+    alertDialog.show();
+  }
 
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {

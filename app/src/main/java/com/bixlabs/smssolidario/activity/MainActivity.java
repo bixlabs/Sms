@@ -309,6 +309,9 @@ public class MainActivity extends AppCompatActivity {
 
 	private void goToSettings() {
 		Intent intent = new Intent(this, SettingsActivity.class);
+    Bundle bundleParameter = new Bundle();
+    bundleParameter.putBoolean("active", isActive);
+    intent.putExtras(bundleParameter);
 		startActivityForResult(intent, SETTINGS_SCREEN);
 	}
 

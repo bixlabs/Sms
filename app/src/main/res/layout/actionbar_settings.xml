@@ -9,6 +9,5 @@
   android:background="@drawable/rectangle_white"
   android:elevation="4dp"
   android:minHeight="?attr/actionBarSize"
-  app:navigationIcon="?attr/homeAsUpIndicator"
   app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
   app:title="@string/settings_activity_title" />
