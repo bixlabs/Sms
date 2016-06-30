@@ -405,11 +405,18 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	public boolean onMenuItemClick(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_done) {
-      
-      if (findPreference("btnDateFilter").getSummary() == null || findPreference("btnTimeFilter").getSummary() == null || findPreference("Organization").getSummary().equals("Organización que recibirá la donación")) {
+
+      if (findPreference(DATE_KEY).getSummary() == null || findPreference(TIME_KEY).getSummary() == null || findPreference(ORGANIZATION_KEY).getSummary().equals("Organización que recibirá la donación")) {
         emptyFieldsDialog();
       }else{
-        finish();
+
+        if(findPreference(ORGANIZATION_KEY).getSummary().equals("Personalizada") &&
+          (findPreference(MESSAGE_KEY).getSummary().equals("Mensaje a enviar") || findPreference(NUMBER_KEY).getSummary().equals("Numero destinatario de la donacion"))){
+          emptyFieldsDialog();
+        }else{
+          finish();
+        }
+
       }
 
 		}
@@ -481,8 +488,16 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if ((keyCode == KeyEvent.KEYCODE_BACK)) {
       this.backPressed = true;
-      Intent resultIntent = new Intent();
-      setResult(Activity.RESULT_OK, resultIntent);
+      if(!appActive) {
+        // Clear preferences
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        editor.apply();
+
+        Intent resultIntent = new Intent();
+        setResult(Activity.RESULT_OK, resultIntent);
+      }
       finish();
     }
     return super.onKeyDown(keyCode, event);

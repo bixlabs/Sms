@@ -378,6 +378,14 @@ public class MainActivity extends AppCompatActivity {
 			editor.apply();
 			checkConfiguration();
 			checkFirstLayout();
+
+      // Clear preferences
+      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(contextOfApplication);
+      SharedPreferences.Editor editor = settings.edit();
+      editor.clear();
+      editor.commit();
+      editor.apply();
+
 			if (isConfigured && totalMessages > 0 ) {
         setButtonIconText(
           scheduleButton,
