@@ -40,7 +40,7 @@
           android:exported="false"
           android:name="com.bixlabs.smssolidario.classes.AlertReceiver">
             <intent-filter>
-                <action android:name="SMS_SENT" />
+                <action android:name="com.bixlabs.smssolidario.SENT_SMS" />
             </intent-filter>
         </receiver>
 
