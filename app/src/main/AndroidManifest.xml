@@ -31,18 +31,14 @@
             android:label="">
         </activity>
 
-        <receiver android:name="com.bixlabs.smssolidario.classes.SmsReceiver" >
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name="com.bixlabs.smssolidario.activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" >
         </activity>
-        <receiver android:name="com.bixlabs.smssolidario.classes.AlertReceiver">
+        <receiver
+          android:exported="false"
+          android:name="com.bixlabs.smssolidario.classes.AlertReceiver">
             <intent-filter>
                 <action android:name="SMS_SENT" />
             </intent-filter>
