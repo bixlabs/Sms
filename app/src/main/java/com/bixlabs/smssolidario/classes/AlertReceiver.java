@@ -74,7 +74,9 @@ public class AlertReceiver extends BroadcastReceiver {
             editor.apply();
           }
           int messagesToSend = settings.getInt(PREF_SMS_TO_SEND, DEFAULT_SMS_TO_SEND);
-          messagesToSend--;
+          if (messagesToSend > 0) {
+            messagesToSend--;
+          }
           sentMessages = settings.getInt(PREF_SENT_SMS, DEFAULT_SENT_SMS);
           sentMessages++;
           editor = settings.edit();
