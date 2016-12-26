@@ -22,7 +22,13 @@ public class Scheduler {
     alarmManager.cancel(pendingIntent);
 
     // set the alarm for particular time
-    alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfFiring, pendingIntent);
+    if (android.os.Build.VERSION.SDK_INT == 18) {
+      alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfFiring, pendingIntent);
+    } else if (android.os.Build.VERSION.SDK_INT >= 19 && android.os.Build.VERSION.SDK_INT < 23) {
+      alarmManager.setExact(AlarmManager.RTC_WAKEUP, dateOfFiring, pendingIntent);
+    } else if (android.os.Build.VERSION.SDK_INT >= 23) {
+      alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dateOfFiring, pendingIntent);
+    }
   }
 
 }
