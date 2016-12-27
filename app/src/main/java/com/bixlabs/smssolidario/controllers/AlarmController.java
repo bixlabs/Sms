@@ -34,7 +34,6 @@ import static com.bixlabs.smssolidario.classes.Constants.VISIBILITY_PUBLIC;
 public class AlarmController {
 
 	private static AlarmController instance = null;
-	long dateOfNextFiring;
 
 	private AlarmController() {}
 
@@ -84,18 +83,15 @@ public class AlarmController {
 		editor.apply();
 
 		// The date must be in milliseconds
-		dateOfNextFiring = nextExpirationDate.getMillis();
+		long dateOfNextFiring = nextExpirationDate.getMillis();
 
 		Intent intentAlarm = new Intent(context, AlertReceiver.class);
-		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intentAlarm,
 			PendingIntent.FLAG_UPDATE_CURRENT);
 
-		// Cancel any existing alarm for this app
-		alarmManager.cancel(pendingIntent);
-
 		//set the alarm for particular time
-		alarmManager.set(AlarmManager.RTC_WAKEUP, dateOfNextFiring, pendingIntent);
+    setNextAlarm(context, dateOfNextFiring, pendingIntent);
+
     // Set the notification for next date
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     String formattedDate = dateFormat.format(nextExpirationDate.toDate());
@@ -121,4 +117,17 @@ public class AlarmController {
     int mnNotifyId = 2;
     mNotificationManager.notify(mnNotifyId, mBuilder.build());
 	}
+
+  private void setNextAlarm(Context context, long date, PendingIntent intent) {
+    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    // Cancel any existing alarm for this app
+    alarmManager.cancel(intent);
+    if (android.os.Build.VERSION.SDK_INT == 18) {
+      alarmManager.set(AlarmManager.RTC_WAKEUP, date, intent);
+    } else if (android.os.Build.VERSION.SDK_INT >= 19 && android.os.Build.VERSION.SDK_INT < 23) {
+      alarmManager.setExact(AlarmManager.RTC_WAKEUP, date, intent);
+    } else if (android.os.Build.VERSION.SDK_INT >= 23) {
+      alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date, intent);
+    }
+  }
 }
