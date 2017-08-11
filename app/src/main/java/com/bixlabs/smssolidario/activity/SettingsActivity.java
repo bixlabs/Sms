@@ -261,7 +261,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				ListPreference lp = (ListPreference) p;
 				if (lp.getValue().equals("Personalizada")) {
 					showMessageAndPhonePreferences();
-					Toast.makeText(contextOfApplication, "Por favor, ingresa número y mensaje para donar",
+					Toast.makeText(contextOfApplication, "Por favor, no olvides ingresar un número y el mensaje para donar",
 						Toast.LENGTH_SHORT).show();
 				}
 				else {

@@ -41,9 +41,5 @@
     android:key="btnTimeFilter"
     android:title="Hora de envío" />
 
-  <CheckBoxPreference
-    android:key="Notify"
-    android:widgetLayout="@layout/switch_preference"
-    android:title="Notificar al enviar" />
 
 </PreferenceScreen>

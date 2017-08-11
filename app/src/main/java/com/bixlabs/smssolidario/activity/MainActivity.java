@@ -363,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
     builderDialog = new AlertDialog.Builder(this);
     View aboutView = getLayoutInflater().inflate(R.layout.sms_permission, null, false);
     builderDialog.setView(aboutView);
+    builderDialog.setCancelable(false);
     DateTime today = DateTime.now();
     String copyrightText = "©" + Integer.toString(today.getYear()) + " " + COMPANY_NAME;
     TextView copyright = (TextView) aboutView.findViewById(R.id.textView_permission_copyrights);

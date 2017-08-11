@@ -2,12 +2,14 @@ package com.bixlabs.smssolidario.classes;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.SmsManager;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.DateTime;
 
 import com.bixlabs.smssolidario.R;
+import com.bixlabs.smssolidario.activity.ConfirmationActivity;
 import com.bixlabs.smssolidario.controllers.AlarmController;
 import com.bixlabs.smssolidario.controllers.MessageController;
 
@@ -24,7 +27,6 @@ import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_ACTIVE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_ALLOWED_PREMIUM;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MAX;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_MESSAGE;
-import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_NOTIFY;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_PHONE;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SENT_SMS;
 import static com.bixlabs.smssolidario.classes.Constants.DEFAULT_SMS_TO_SEND;
@@ -34,7 +36,6 @@ import static com.bixlabs.smssolidario.classes.Constants.PREF_DAY;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_ERROR;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_MAX;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_MESSAGE;
-import static com.bixlabs.smssolidario.classes.Constants.PREF_NOTIFY;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_PHONE;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_SENT_SMS;
 import static com.bixlabs.smssolidario.classes.Constants.PREF_SMS_TO_SEND;
@@ -63,6 +64,7 @@ public class AlertReceiver extends BroadcastReceiver {
           }
 					break;
         // This is the case when the message is sent
+        // This case will be executed as many times as max messages the user allows
 				case Activity.RESULT_OK:
           settings = PreferenceManager.getDefaultSharedPreferences(context);
           boolean allowedPremium = settings.getBoolean(PREF_ALLOWED_PREMIUM, DEFAULT_ALLOWED_PREMIUM);
@@ -120,25 +122,26 @@ public class AlertReceiver extends BroadcastReceiver {
     editor.putInt(PREF_SMS_TO_SEND, maxMessages);
     editor.apply();
 
-    String phoneNumber = settings.getString(PREF_PHONE, DEFAULT_PHONE);
-    String textMessage = settings.getString(PREF_MESSAGE, DEFAULT_MESSAGE);
-    boolean notifyWhenSending = settings.getBoolean(PREF_NOTIFY, DEFAULT_NOTIFY);
-    if (notifyWhenSending) {
-      NotificationCompat.Builder mBuilder =
-        new NotificationCompat.Builder(context)
-                                .setSmallIcon(R.drawable.notification_sms_solidario)
-                                .setContentTitle(context.getString(R.string.app_name))
-                                .setContentText(context.getString(R.string.toaster_sending_sms))
-                                .setNumber(maxMessages)
-                                .setVisibility(VISIBILITY_PUBLIC)
-                                .setAutoCancel(true);
-      NotificationManager mNotificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-      int mnNotifyId = 1;
-      mNotificationManager.notify(mnNotifyId, mBuilder.build());
-    }
-    MessageController msgController = MessageController.getInstance();
-    msgController.sendMessage(phoneNumber, textMessage, context);
+    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+
+    NotificationCompat.Builder mBuilder =
+      new NotificationCompat.Builder(context)
+                              .setSmallIcon(R.drawable.notification_sms_solidario)
+                              .setContentTitle(context.getString(R.string.app_name))
+                              .setContentText(context.getString(R.string.toaster_sending_sms))
+                              .setVisibility(VISIBILITY_PUBLIC)
+                              .setPriority(NotificationCompat.PRIORITY_MAX)
+                              .setAutoCancel(true);
+    NotificationManager mNotificationManager =
+      (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+    stackBuilder.addNextIntent(new Intent(context, ConfirmationActivity.class));
+    PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+    mBuilder.setContentIntent(pendingIntent);
+
+    int mnNotifyId = 1;
+    mNotificationManager.notify(mnNotifyId, mBuilder.build());
   }
 
 	private void alertErrorWhileSendingSms (Context context) {

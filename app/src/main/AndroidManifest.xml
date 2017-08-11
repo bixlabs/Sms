@@ -1,74 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bixlabs.smssolidario" >
+  package="com.bixlabs.smssolidario">
 
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.SEND_SMS" />
+  <uses-permission android:name="android.permission.RECEIVE_SMS" />
+  <uses-permission android:name="android.permission.READ_SMS" />
+  <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <application android:name="com.bixlabs.smssolidario.SmsAnalyticsApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Sms Solidario"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name="com.bixlabs.smssolidario.activity.SplashScreenActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashScreenTheme" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+  <application
+    android:name=".SmsAnalyticsApplication"
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="Sms Solidario"
+    android:theme="@style/AppTheme">
+    <activity
+      android:name=".activity.SplashScreenActivity"
+      android:screenOrientation="portrait"
+      android:theme="@style/SplashScreenTheme">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.bixlabs.smssolidario.activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:label="">
-        </activity>
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity
+      android:name=".activity.MainActivity"
+      android:label=""
+      android:screenOrientation="portrait"
+      android:theme="@style/AppTheme"></activity>
+    <activity
+      android:name=".activity.SettingsActivity"
+      android:label="@string/title_activity_settings"
+      android:screenOrientation="portrait"></activity>
 
-        <activity
-            android:name="com.bixlabs.smssolidario.activity.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait" >
-        </activity>
-        <receiver
-          android:exported="false"
-          android:name="com.bixlabs.smssolidario.classes.AlertReceiver">
-            <intent-filter>
-                <action android:name="com.bixlabs.smssolidario.SENT_SMS" />
-            </intent-filter>
-        </receiver>
+    <receiver
+      android:name=".classes.AlertReceiver"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="com.bixlabs.smssolidario.SENT_SMS" />
+      </intent-filter>
+    </receiver>
 
-        <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
-     dispatching on non-Google Play devices -->
-        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
-            </intent-filter>
-        </receiver>
-        <service android:name="com.google.android.gms.analytics.AnalyticsService"
-            android:enabled="true"
-            android:exported="false"/>
+    <!--
+     Optionally, register AnalyticsReceiver and AnalyticsService to support background
+     dispatching on non-Google Play devices
+        -->
+    <receiver
+      android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+      android:enabled="true">
+      <intent-filter>
+        <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+      </intent-filter>
+    </receiver>
 
-        <!-- Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
-             installation campaign reporting -->
-        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+    <service
+      android:name="com.google.android.gms.analytics.AnalyticsService"
+      android:enabled="true"
+      android:exported="false" />
 
-        <meta-data
-          android:name="io.fabric.ApiKey"
-          android:value="af7f5aaab9e54703c14babe5ea3aa7439a5acf60" />
-    </application>
+    <!--
+             Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
+             installation campaign reporting
+        -->
+    <receiver
+      android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="com.android.vending.INSTALL_REFERRER" />
+      </intent-filter>
+    </receiver>
+
+    <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
+    <meta-data
+      android:name="io.fabric.ApiKey"
+      android:value="af7f5aaab9e54703c14babe5ea3aa7439a5acf60" />
+
+    <activity
+      android:name=".activity.ConfirmationActivity"
+      android:label="@string/title_activity_confirmation"
+      android:theme="@style/AppTheme"></activity>
+  </application>
 
 </manifest>
