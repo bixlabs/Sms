@@ -49,9 +49,10 @@ public final class Constants {
     aMap.put("ASH", new String[]{"Amigos", "24200"});
     aMap.put("FACB", new String[]{"Mamas", "62627"});
     aMap.put("UNCF", new String[]{"Unicef", "3662"});
-    aMap.put("OJ", new String[]{"Niño", "20202"});
     aMap.put("PG", new String[]{"Amigo", "10100"});
     aMap.put("AI", new String[]{"Aldeas", "10101"});
+    aMap.put("TA", new String[]{"Teleton", "7857"});
+    aMap.put("TM", new String[]{"Teleton", "950010"});
     ORGANIZATION_INFO = Collections.unmodifiableMap(aMap);
   }
 }

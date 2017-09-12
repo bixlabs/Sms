@@ -29,8 +29,8 @@
   <string name="activity_main_lets_begin">¡Comencemos!</string>
   <string name="activity_main_sms">SMS</string>
   <string name="activity_main_donated">donados.</string>
-  <string name ="activity_main_app_status_active">Aplicación activa</string>
-  <string name ="activity_main_app_status_inactive">Aplicación inactiva</string>
+  <string name="activity_main_app_status_active">Aplicación activa</string>
+  <string name="activity_main_app_status_inactive">Aplicación inactiva</string>
   <string name="activity_main_configure_schedule_text">Programar</string>
   <string name="activity_main_edit_donation">Editar donación</string>
   <string name="settings_activity_title">Programar donación</string>
@@ -39,9 +39,9 @@
   <string name="about_interest">Es de gran interés para nosotros saber en qué cosas podemos mejorar esta app, queremos escuchar tus recomendaciones!\n\nEscribinos a: smssolidario@bixlabs.com</string>
   <string name="about_developed_by">Aplicación desarrollada y diseñada por:</string>
   <string name="about_bixlabs_web">www.bixlabs.com</string>
-  <string name="about_bixlabs_copyright">©2016 BixLabs</string>
+  <string name="about_bixlabs_copyright">©2017 BixLabs</string>
   <string name="about_version">Versión</string>
-  <string name="toaster_sending_sms">Se va a donar dinero de tu saldo, muchas gracias! :)</string>
+  <string name="toaster_sending_sms">Se va a donar dinero de tu saldo, por favor toca aquí para confirmar tu donación</string>
   <string name="accept">Aceptar</string>
   <string name="cancel">Cancelar</string>
   <string name="permission_work_correctly">Para que la aplicación funcione correctamente, necesitamos que le indiques a tu celular que esta app enviará mensajes programados por ti.</string>
@@ -49,4 +49,7 @@
   <string name="permission_validated">Ser donante validado :)</string>
   <string name="permission_thanks">¡Gracias por ser parte!</string>
   <string name="notification_next_schedule">Próximo envío automático: </string>
+  <string name="title_activity_confirmation">Confirma tu donación</string>
+  <string name="texto_cancelar">Cancelar</string>
+  <string name="confirmar_donacion">Confirmar Donación</string>
 </resources>
